@@ -1,0 +1,22 @@
+{
+  "dataset": "01_estruturados_escores",
+  "n_test_rows": 160,
+  "models": [
+    {
+      "model": "ordinal_logit",
+      "method": "coeficientes",
+      "file": "ordinal_coefficients.csv"
+    },
+    {
+      "model": "random_forest",
+      "method": "TreeSHAP",
+      "file": "global_shap_importance_highurgent.csv"
+    },
+    {
+      "model": "xgboost",
+      "method": "TreeSHAP",
+      "file": "global_shap_importance_highurgent.csv"
+    }
+  ],
+  "test_ids_file": "test_patient_ids.csv"
+}

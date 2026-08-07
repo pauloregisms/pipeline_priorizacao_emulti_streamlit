@@ -1,0 +1,65 @@
+site_name: Pipeline Sintético de Priorização para e-Multi
+site_description: Documentação técnica e metodológica do pipeline de simulação sintética.
+site_dir: site
+docs_dir: docs
+
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Início: index.md
+  - Explicações:
+      - Visão geral: explanation/visao-geral.md
+      - Metodologia e fluxo: explanation/metodologia-e-fluxo.md
+      - Limites e salvaguardas: explanation/limites-e-salvaguardas.md
+  - Tutoriais:
+      - Primeira execução local: tutorials/primeira-execucao.md
+      - Demonstração Streamlit: tutorials/demonstracao-streamlit.md
+      - Google Colab: tutorials/google-colab.md
+  - Guias práticos:
+      - Criar cenário: how-to/criar-cenario.md
+      - Alterar matriz de prioridade: how-to/alterar-matriz-prioridade.md
+      - Usar o provedor Gemini: how-to/usar-provedor-gemini.md
+      - Adicionar outro provedor de LLM: how-to/adicionar-provedor-llm.md
+      - Anotação humana: how-to/anotacao-humana.md
+      - Análise de sensibilidade: how-to/analise-sensibilidade.md
+      - Visualizar classificação final: how-to/visualizar-classificacao-final.md
+  - Referência:
+      - Configuração YAML: reference/configuracao.md
+      - Nomenclatura: reference/nomenclatura.md
+      - Contratos de dados: reference/contratos-de-dados.md
+      - Dicionário de dados: reference/dicionario-de-dados.md
+      - Matriz de prioridade: reference/matriz-de-prioridade.md
+      - Ontologia de marcadores: reference/ontologia-de-marcadores.md
+      - Scripts e CLI: reference/scripts.md
+      - Artefatos: reference/artefatos.md
+      - Provedor Gemini: reference/provedor-gemini.md
+  - Arquitetura:
+      - arc42 resumido: architecture/arc42.md
+      - C4 — Contexto: architecture/c4-contexto.md
+      - C4 — Contêineres: architecture/c4-conteineres.md
+      - C4 — Componentes: architecture/c4-componentes.md
+  - Decisões:
+      - Índice de ADRs: decisions/README.md
+      - ADR-001: decisions/ADR-001-gerador-probabilistico.md
+      - ADR-002: decisions/ADR-002-narrativas-desacopladas.md
+      - ADR-003: decisions/ADR-003-prioridade-simulada-ordinal.md
+      - ADR-004: decisions/ADR-004-validacao-aninhada.md
+      - ADR-005: decisions/ADR-005-separacao-marcadores-origem-extraidos.md
+      - ADR-006: decisions/ADR-006-provedor-gemini.md
+      - Modelo de ADR: decisions/ADR-TEMPLATE.md
+  - Governança da documentação: governanca-documentacao.md

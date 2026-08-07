@@ -1,0 +1,24 @@
+{
+  "provider": "template",
+  "generator_id": "template-simulator-v1",
+  "prompt_version": "narrativa_soap_v1",
+  "narratives": 800,
+  "api_called": false,
+  "forbidden_input_keys": [
+    "Yhat",
+    "Yref",
+    "label",
+    "prioridade",
+    "prioridade_prevista",
+    "prioridade_prevista_codigo",
+    "prioridade_referencia",
+    "prioridade_referencia_codigo",
+    "priority",
+    "priority_code",
+    "priority_label",
+    "target",
+    "yhat",
+    "yref"
+  ],
+  "seed_base": 20260806
+}

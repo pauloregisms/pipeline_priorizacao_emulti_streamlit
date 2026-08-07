@@ -1,0 +1,29 @@
+{
+  "seed": 20261806,
+  "idate_reverse_items": [
+    1,
+    2,
+    5,
+    8,
+    10,
+    11,
+    15,
+    16,
+    19,
+    20
+  ],
+  "score_ranges": {
+    "phq9_total": [
+      0,
+      27
+    ],
+    "gad7_total": [
+      0,
+      21
+    ],
+    "idate_estado_total": [
+      20,
+      80
+    ]
+  }
+}

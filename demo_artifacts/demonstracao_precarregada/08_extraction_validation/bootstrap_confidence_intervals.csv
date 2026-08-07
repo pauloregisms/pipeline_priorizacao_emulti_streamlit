@@ -1,0 +1,3 @@
+extractor,metric,mean,ci_2_5,ci_97_5
+primary,macro_f1,1.0,1.0,1.0
+primary,micro_f1,1.0,1.0,1.0

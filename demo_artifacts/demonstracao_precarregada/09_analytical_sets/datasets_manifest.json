@@ -1,0 +1,17 @@
+{
+  "01_estruturados_escores": {
+    "n_rows": 800,
+    "n_columns": 18,
+    "path": "01_estruturados_escores.csv"
+  },
+  "02_limite_superior_marcadores_origem": {
+    "n_rows": 800,
+    "n_columns": 98,
+    "path": "02_limite_superior_marcadores_origem.csv"
+  },
+  "03_operacional_marcadores_extraidos": {
+    "n_rows": 800,
+    "n_columns": 98,
+    "path": "03_operacional_marcadores_extraidos.csv"
+  }
+}

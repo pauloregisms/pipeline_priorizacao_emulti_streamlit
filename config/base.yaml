@@ -1,0 +1,183 @@
+# ================================================================
+# Configuração-base do experimento de simulação para e-Multi.
+# ATENÇÃO: todos os valores abaixo são ilustrativos. Antes da execução
+# definitiva, substitua-os por parâmetros justificados por literatura,
+# documentos públicos ou consenso estruturado de especialistas.
+# ================================================================
+project:
+  name: "pipeline_priorizacao_emulti"
+  run_description: "Cenário-base de prova de conceito com dados inteiramente sintéticos"
+  parameter_status: "ILUSTRATIVO - CALIBRAR ANTES DA ANÁLISE DEFINITIVA"
+
+paths:
+  artifacts_dir: "artifacts"
+
+simulation:
+  n_records: 2500
+  base_seed: 20260324
+  adult_age_min: 18
+  adult_age_max: 80
+  # A réplica deve receber uma semente específica. O cenário-base usa 0.
+  replicate_index: 0
+  # Cenários de robustez podem aumentar estes valores de forma controlada.
+  missingness_rate: 0.00
+  narrative_omission_rate: 0.00
+  extraction_flip_rate: 0.00
+
+population:
+  gender_probabilities:
+    feminino: 0.53
+    masculino: 0.45
+    outro_ou_nao_informado: 0.02
+  education_probabilities:
+    fundamental_ou_menos: 0.35
+    medio: 0.45
+    superior: 0.20
+  income_lognormal_meanlog: 7.75
+  income_lognormal_sigma: 0.55
+
+vulnerability:
+  # Pesos não negativos que somam 1. Registrar a fonte de cada peso.
+  weights:
+    renda_baixa: 0.30
+    escolaridade_baixa: 0.20
+    inseguranca_alimentar: 0.25
+    moradia_precaria: 0.25
+  source_note: "Substituir por evidência ou consenso documentado."
+
+psychometrics:
+  # Parâmetros somente ilustrativos para a prova de conceito.
+  phq9:
+    n_items: 9
+    n_categories: 4
+    thresholds: [-1.10, -0.10, 0.95]
+    discrimination: 1.15
+  gad7:
+    n_items: 7
+    n_categories: 4
+    thresholds: [-1.00, 0.00, 1.05]
+    discrimination: 1.10
+  state_anxiety:
+    n_items: 20
+    n_categories: 4
+    thresholds: [-0.80, 0.05, 0.95]
+    discrimination: 0.95
+    # Índices 1-baseados dos itens de ansiedade ausente, pontuados de forma reversa.
+    reverse_scored_items: [1, 2, 5, 8, 10, 11, 15, 16, 19, 20]
+
+priority_rules:
+  version: "priority-matrix-v2-draft"
+  validation_status: "PENDENTE DE VALIDAÇÃO DE CONTEÚDO"
+  # Limiares ilustrativos. Devem ser protocolados e validados por conteúdo.
+  phq_moderate: 10
+  phq_high: 20
+  gad_moderate: 10
+  gad_high: 15
+  stai_moderate: 50
+  stai_high: 65
+  vulnerability_high: 0.66
+  high_evidence_weight: 0.85
+  moderate_evidence_weight: 0.35
+  high_priority_cutoff: 3.0
+  moderate_priority_cutoff: 1.2
+  # O rótulo-base é determinístico. Ruído só pode ser ativado em cenário explícito.
+  nonurgent_label_noise: 0.00
+  source_note: "Substituir por matriz de prioridade validada por especialistas."
+
+narrative:
+  # "template" mantém a execução local. Use config/gemini.yaml para ativar a API.
+  provider: "template"
+  generator_id: "template-simulator-v1"
+  mode: "offline_smoke_test"
+  prompt_version: "narrativa_soap_v1"
+  max_retries: 0
+  language: "pt-BR"
+  # Não incluir prioridade/rótulo em prompts ou em objetos enviados ao gerador.
+  forbidden_input_keys: ["prioridade_referencia", "prioridade_referencia_codigo", "prioridade_prevista", "prioridade_prevista_codigo", "priority", "prioridade", "priority_code", "priority_label", "label", "target", "Yref", "Yhat"]
+  # Mantido aqui para documentar a estrutura do provedor. config/gemini.yaml faz o override executável.
+  gemini:
+    generator_id: "gemini-api-gemini-3.5-flash"
+    model_id: "gemini-3.5-flash"
+    api_key_env: "GEMINI_API_KEY"
+    temperature: 1.0
+    max_output_tokens: 500
+    retry_backoff_seconds: 2.0
+
+extraction:
+  provider: "rules"
+  extractor_id: "rule-dictionary-qualified-v2"
+  ontology_version: "ontology_v2"
+  prompt_version: "extracao_marcadores_v1"
+  max_retries: 2
+  bootstrap_repetitions: 200
+  stability:
+    enabled: false
+    n_records: 50
+    repetitions: 3
+  gemini:
+    extractor_id: "gemini-api-gemini-3.5-flash-extractor-v1"
+    model_id: "gemini-3.5-flash"
+    api_key_env: "GEMINI_API_KEY"
+    temperature: 0.0
+    max_output_tokens: 2200
+    retry_backoff_seconds: 2.0
+  markers:
+    - ideacao_suicida
+    - planejamento_suicida
+    - autoagressao_iminente
+    - risco_violencia
+    - sintomas_psicoticos
+    - uso_problematico_substancias
+    - internacao_previa
+    - agravamento_recente
+    - suporte_social_baixo
+    - comprometimento_funcional
+
+annotation:
+  # Quantidade por estrato aproximada. O script reduz quando houver poucos registros.
+  n_per_priority: 30
+  include_critical_cases: true
+
+modeling:
+  final_test_size: 0.20
+  outer_splits: 3
+  inner_splits: 2
+  random_state: 20260324
+  n_jobs: -1
+  bootstrap_repetitions: 100
+  scoring: "f1_macro"
+  required_models: ["ordinal_logit", "random_forest", "xgboost"]
+  strict_dependencies: true
+  calibration_bins: 10
+  # Evitar requerer classes raras impossíveis no cenário. O script verifica a viabilidade.
+  min_class_count_for_cv: 25
+
+sensitivity:
+  enabled: true
+  scenarios:
+    - name: "baseline_seed_1"
+      overrides:
+        simulation:
+          base_seed: 20260325
+    - name: "extraction_error_10pct"
+      overrides:
+        simulation:
+          base_seed: 20260326
+          extraction_flip_rate: 0.10
+    - name: "missingness_10pct"
+      overrides:
+        simulation:
+          base_seed: 20260327
+          missingness_rate: 0.10
+    - name: "narrative_omission_10pct"
+      overrides:
+        simulation:
+          base_seed: 20260328
+          narrative_omission_rate: 0.10
+    - name: "priority_thresholds_stricter"
+      overrides:
+        simulation:
+          base_seed: 20260329
+        priority_rules:
+          high_priority_cutoff: 3.4
+          moderate_priority_cutoff: 1.5

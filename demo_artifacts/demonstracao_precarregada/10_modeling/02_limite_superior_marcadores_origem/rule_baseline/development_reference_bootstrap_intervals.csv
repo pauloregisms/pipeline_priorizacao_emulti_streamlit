@@ -1,0 +1,6 @@
+metric,bootstrap_lower_2_5,bootstrap_upper_97_5
+f1_macro,1.0,1.0
+weighted_kappa,1.0,1.0
+ordinal_mae,0.0,0.0
+recall_alta,1.0,1.0
+recall_urgente,1.0,1.0

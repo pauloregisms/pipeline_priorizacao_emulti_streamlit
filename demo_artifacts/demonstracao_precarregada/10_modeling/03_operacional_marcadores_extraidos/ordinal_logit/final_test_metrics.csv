@@ -1,0 +1,2 @@
+f1_macro,weighted_kappa,ordinal_mae,recall_alta,recall_urgente,auc_roc_ovr_macro,auprc_alta,auprc_urgente,multiclass_brier,multiclass_log_loss,brier_highurgent,log_loss_highurgent,calibration_intercept,calibration_slope
+0.8454834360554699,0.8473282442748091,0.19375,0.875,1.0,0.9457530586863635,0.9044959608629946,1.0,0.2650751508967487,0.4992366319552575,0.07788152540451977,0.25666802978288156,-0.08639565947281441,0.8367547709661967

@@ -1,0 +1,31 @@
+{
+  "profiles": {
+    "n_records": 800,
+    "n_failed": 0
+  },
+  "psychometrics": {
+    "cronbach_alpha": {
+      "phq9": 0.8411883819164261,
+      "gad7": 0.7165190989465214,
+      "idate_estado": 0.8414318034987662
+    },
+    "correlations": {
+      "phq9_total": {
+        "phq9_total": 1.0,
+        "gad7_total": 0.7323,
+        "idate_estado_total": 0.7885
+      },
+      "gad7_total": {
+        "phq9_total": 0.7323,
+        "gad7_total": 1.0,
+        "idate_estado_total": 0.7941
+      },
+      "idate_estado_total": {
+        "phq9_total": 0.7885,
+        "gad7_total": 0.7941,
+        "idate_estado_total": 1.0
+      }
+    },
+    "n_failed": 0
+  }
+}

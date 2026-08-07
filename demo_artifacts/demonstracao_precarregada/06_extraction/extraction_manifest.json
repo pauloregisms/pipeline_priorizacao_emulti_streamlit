@@ -1,0 +1,22 @@
+{
+  "provider": "rules",
+  "extractor_id": "rule-dictionary-qualified-v2",
+  "ontology_version": "ontology_v2",
+  "model_id": null,
+  "n_narratives": 800,
+  "failure_count": 0,
+  "retry_count": 0,
+  "rule_baseline_file": null,
+  "stability_files": [],
+  "input_contract": [
+    "patient_id",
+    "narrativa_clinica"
+  ],
+  "forbidden_inputs": [
+    "dados_estruturados",
+    "indicadores_psicometricos",
+    "marcadores_origem",
+    "prioridade_referencia"
+  ],
+  "note": "A extração recebe somente a narrativa sintética; a regra independente é preservada como comparador."
+}

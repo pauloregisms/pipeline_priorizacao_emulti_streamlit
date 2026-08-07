@@ -1,0 +1,161 @@
+Posição,ID do perfil sintético,Prioridade prevista,Probabilidade alta/urgente,Probabilidade urgente,Idade,Categoria de gênero,Vulnerabilidade social,PHQ-9,GAD-7,IDATE-Estado,Comprometimento funcional extraído,Sinais de atenção extraídos
+1,SYN-20260806-000390,Urgente,99.4%,94.1%,21,Feminino,0.47,27,21,80,Importante,Ideação suicida atual; Risco de violência; Uso problemático de substâncias; Internação prévia; Agravamento recente
+2,SYN-20260806-000316,Urgente,99.4%,95.7%,37,Feminino,0.52,27,21,78,Moderado,Ideação suicida atual; Planejamento de autoagressão; Sintomas psicóticos; Uso problemático de substâncias; Internação prévia; Agravamento recente
+3,SYN-20260806-000139,Urgente,99.2%,89.2%,24,Masculino,0.71,25,19,77,Moderado,Ideação suicida atual; Planejamento de autoagressão; Uso problemático de substâncias; Internação prévia; Suporte social baixo
+4,SYN-20260806-000544,Urgente,99.2%,93.5%,26,Masculino,0.68,22,18,75,Importante,Ideação suicida atual; Planejamento de autoagressão; Autoagressão iminente
+5,SYN-20260806-000679,Urgente,99.1%,91.5%,27,Feminino,0.27,23,17,74,Importante,Ideação suicida atual; Planejamento de autoagressão; Autoagressão iminente
+6,SYN-20260806-000256,Alta,99.8%,0.0%,52,Feminino,0.95,23,16,67,Moderado,Internação prévia; Agravamento recente; Suporte social baixo
+7,SYN-20260806-000186,Alta,99.8%,0.1%,40,Feminino,0.73,24,19,69,Moderado,Uso problemático de substâncias; Agravamento recente
+8,SYN-20260806-000171,Alta,99.7%,0.0%,66,Feminino,0.68,19,15,66,Moderado,Suporte social baixo
+9,SYN-20260806-000444,Alta,99.7%,0.1%,55,Feminino,0.24,26,18,67,Moderado,Uso problemático de substâncias; Internação prévia; Agravamento recente; Suporte social baixo
+10,SYN-20260806-000153,Alta,99.7%,0.1%,30,Feminino,0.51,22,15,69,Moderado,Agravamento recente; Suporte social baixo
+11,SYN-20260806-000512,Alta,99.7%,0.1%,49,Feminino,0.25,24,20,65,Moderado,Agravamento recente; Suporte social baixo
+12,SYN-20260806-000424,Alta,99.7%,0.1%,41,Masculino,0.75,26,14,68,Moderado,Internação prévia; Suporte social baixo
+13,SYN-20260806-000344,Alta,99.6%,0.2%,41,Feminino,0.69,26,19,67,Moderado,Agravamento recente
+14,SYN-20260806-000750,Alta,99.6%,0.2%,48,Feminino,0.96,25,16,64,Importante,Suporte social baixo
+15,SYN-20260806-000769,Alta,99.6%,0.1%,39,Feminino,0.91,22,14,63,Importante,Agravamento recente; Suporte social baixo
+16,SYN-20260806-000691,Alta,99.6%,0.3%,43,Feminino,0.45,26,21,78,Importante,Internação prévia; Agravamento recente
+17,SYN-20260806-000098,Alta,99.6%,0.6%,38,Feminino,0.39,27,18,67,Importante,Uso problemático de substâncias; Agravamento recente; Suporte social baixo
+18,SYN-20260806-000036,Alta,99.6%,0.1%,48,Masculino,0.72,24,13,72,Moderado,Internação prévia; Suporte social baixo
+19,SYN-20260806-000542,Alta,99.6%,0.6%,28,Feminino,0.7,27,21,78,Importante,Uso problemático de substâncias; Suporte social baixo
+20,SYN-20260806-000086,Alta,99.6%,24.3%,45,Feminino,0.96,26,17,71,Importante,Ideação suicida atual; Sintomas psicóticos
+21,SYN-20260806-000207,Alta,99.6%,0.2%,36,Masculino,0.5,27,21,70,Moderado,Uso problemático de substâncias; Agravamento recente; Suporte social baixo
+22,SYN-20260806-000023,Alta,99.5%,0.2%,60,Feminino,0.54,27,19,71,Moderado,Agravamento recente; Suporte social baixo
+23,SYN-20260806-000530,Alta,99.5%,0.5%,41,Feminino,0.53,26,19,69,Importante,Internação prévia; Suporte social baixo
+24,SYN-20260806-000503,Alta,99.5%,0.3%,18,Feminino,0.45,27,17,66,Importante,Internação prévia
+25,SYN-20260806-000092,Alta,99.5%,17.9%,19,Feminino,0.52,24,19,68,Importante,Sintomas psicóticos; Uso problemático de substâncias
+26,SYN-20260806-000039,Alta,99.5%,0.2%,33,Feminino,0.52,25,19,68,Moderado,Agravamento recente
+27,SYN-20260806-000687,Alta,99.4%,0.2%,44,Masculino,0.76,26,16,63,Moderado,Ideação suicida atual; Agravamento recente; Suporte social baixo
+28,SYN-20260806-000686,Alta,99.4%,0.2%,39,Feminino,0.9,27,20,67,Leve,Agravamento recente
+29,SYN-20260806-000595,Alta,99.4%,0.1%,42,Masculino,0.46,22,16,75,Moderado,Agravamento recente
+30,SYN-20260806-000774,Alta,99.4%,0.1%,24,Feminino,0.69,23,17,67,Ausente,Suporte social baixo
+31,SYN-20260806-000369,Alta,99.4%,0.1%,38,Masculino,0.73,23,17,73,Leve,Agravamento recente; Suporte social baixo
+32,SYN-20260806-000659,Alta,99.4%,26.5%,56,Feminino,0.93,26,18,63,Importante,Sintomas psicóticos; Uso problemático de substâncias; Internação prévia
+33,SYN-20260806-000003,Alta,99.4%,0.5%,43,Masculino,0.25,26,18,67,Importante,Uso problemático de substâncias
+34,SYN-20260806-000664,Alta,99.4%,0.5%,26,Masculino,0.46,26,16,76,Importante,Agravamento recente
+35,SYN-20260806-000768,Alta,99.4%,1.1%,44,Masculino,0.34,27,17,71,Importante,Uso problemático de substâncias
+36,SYN-20260806-000761,Alta,99.3%,0.3%,18,Masculino,0.29,26,19,75,Moderado,Internação prévia; Agravamento recente; Suporte social baixo
+37,SYN-20260806-000378,Alta,99.3%,0.2%,51,Feminino,0.24,24,15,70,Importante,Nenhum marcador extraído
+38,SYN-20260806-000550,Alta,99.3%,0.7%,45,Masculino,0.23,25,18,77,Importante,Ideação suicida atual; Agravamento recente
+39,SYN-20260806-000684,Alta,99.3%,0.1%,33,Masculino,0.72,23,12,54,Importante,Agravamento recente; Suporte social baixo
+40,SYN-20260806-000451,Alta,99.2%,0.4%,31,Masculino,0.19,24,17,62,Importante,Nenhum marcador extraído
+41,SYN-20260806-000725,Alta,99.1%,0.2%,52,Masculino,0.93,27,12,59,Moderado,Ideação suicida atual; Agravamento recente; Suporte social baixo
+42,SYN-20260806-000637,Alta,98.9%,1.3%,19,Feminino,0.72,26,16,76,Importante,Internação prévia
+43,SYN-20260806-000587,Alta,98.9%,0.0%,54,Masculino,0.68,23,14,57,Moderado,Suporte social baixo
+44,SYN-20260806-000669,Alta,98.8%,0.1%,64,Masculino,0.7,23,16,55,Leve,Internação prévia; Suporte social baixo
+45,SYN-20260806-000122,Alta,98.8%,0.1%,43,Feminino,0.72,22,16,51,Moderado,Internação prévia; Suporte social baixo
+46,SYN-20260806-000231,Alta,98.7%,18.6%,52,Feminino,0.5,20,16,62,Importante,Sintomas psicóticos; Agravamento recente; Suporte social baixo
+47,SYN-20260806-000456,Alta,98.7%,0.4%,27,Feminino,0.77,21,13,74,Importante,Nenhum marcador extraído
+48,SYN-20260806-000454,Alta,98.6%,0.2%,26,Feminino,0.42,25,13,65,Moderado,Nenhum marcador extraído
+49,SYN-20260806-000575,Alta,98.5%,0.2%,69,Feminino,0.21,20,18,61,Leve,Suporte social baixo
+50,SYN-20260806-000461,Alta,97.9%,0.2%,24,Feminino,0.77,24,9,59,Moderado,Nenhum marcador extraído
+51,SYN-20260806-000261,Alta,97.7%,0.4%,32,Feminino,0.93,23,12,59,Importante,Uso problemático de substâncias
+52,SYN-20260806-000694,Alta,97.7%,0.3%,31,Feminino,0.42,21,20,58,Leve,Suporte social baixo
+53,SYN-20260806-000508,Alta,97.6%,0.4%,43,Feminino,0.27,15,21,68,Leve,Ideação suicida atual; Uso problemático de substâncias; Suporte social baixo
+54,SYN-20260806-000625,Alta,97.4%,0.4%,53,Feminino,0.49,21,16,54,Importante,Suporte social baixo
+55,SYN-20260806-000221,Alta,95.3%,0.4%,45,Masculino,0.27,22,14,62,Moderado,Sintomas psicóticos; Suporte social baixo
+56,SYN-20260806-000437,Alta,95.1%,0.3%,27,Masculino,0.49,26,11,62,Moderado,Nenhum marcador extraído
+57,SYN-20260806-000009,Alta,94.6%,1.0%,33,Feminino,0.23,25,11,55,Leve,Sintomas psicóticos; Agravamento recente; Suporte social baixo
+58,SYN-20260806-000339,Alta,94.1%,0.3%,75,Feminino,0.25,20,13,51,Importante,Agravamento recente
+59,SYN-20260806-000731,Alta,93.6%,0.3%,42,Masculino,0.23,21,19,56,Leve,Agravamento recente
+60,SYN-20260806-000421,Alta,93.3%,0.2%,40,Feminino,0.46,20,16,56,Leve,Suporte social baixo
+61,SYN-20260806-000097,Alta,92.7%,0.2%,34,Masculino,0.27,18,16,57,Leve,Suporte social baixo
+62,SYN-20260806-000483,Alta,92.5%,0.1%,40,Masculino,0.91,12,15,56,Ausente,Suporte social baixo
+63,SYN-20260806-000701,Alta,91.7%,0.2%,40,Feminino,0.74,19,13,53,Moderado,Agravamento recente
+64,SYN-20260806-000001,Alta,87.9%,0.4%,54,Masculino,0.13,15,15,70,Leve,Agravamento recente
+65,SYN-20260806-000438,Alta,87.5%,0.2%,35,Masculino,0.97,8,11,60,Leve,Suporte social baixo
+66,SYN-20260806-000791,Alta,87.0%,0.2%,28,Feminino,0.68,17,12,66,Moderado,Nenhum marcador extraído
+67,SYN-20260806-000576,Alta,84.2%,0.3%,34,Feminino,0.5,12,15,54,Ausente,Suporte social baixo
+68,SYN-20260806-000055,Alta,83.4%,0.5%,51,Feminino,0.66,27,15,51,Leve,Agravamento recente
+69,SYN-20260806-000381,Alta,80.8%,0.2%,18,Feminino,0.42,18,9,59,Moderado,Suporte social baixo
+70,SYN-20260806-000632,Alta,78.8%,0.3%,35,Masculino,0.48,15,8,56,Moderado,Agravamento recente; Suporte social baixo
+71,SYN-20260806-000392,Alta,74.0%,0.1%,32,Masculino,0.7,22,10,49,Leve,Agravamento recente
+72,SYN-20260806-000244,Alta,66.8%,0.4%,27,Feminino,0.75,20,5,38,Leve,Agravamento recente; Suporte social baixo
+73,SYN-20260806-000572,Alta,60.8%,1.0%,38,Feminino,0.45,20,16,51,Importante,Nenhum marcador extraído
+74,SYN-20260806-000536,Alta,59.2%,0.7%,51,Masculino,0.92,10,16,48,Leve,Nenhum marcador extraído
+75,SYN-20260806-000179,Moderada,49.0%,0.3%,57,Masculino,0.77,18,13,50,Moderado,Nenhum marcador extraído
+76,SYN-20260806-000155,Moderada,46.8%,0.3%,32,Masculino,0.47,16,8,50,Leve,Agravamento recente; Suporte social baixo
+77,SYN-20260806-000394,Moderada,45.2%,1.6%,42,Feminino,0.72,15,7,62,Importante,Nenhum marcador extraído
+78,SYN-20260806-000593,Moderada,42.9%,0.5%,18,Feminino,0.52,14,11,52,Leve,Suporte social baixo
+79,SYN-20260806-000639,Moderada,38.7%,0.4%,31,Masculino,0.43,10,11,60,Moderado,Suporte social baixo
+80,SYN-20260806-000439,Moderada,37.9%,0.3%,46,Masculino,0.7,3,7,51,Ausente,Suporte social baixo
+81,SYN-20260806-000241,Moderada,37.9%,0.4%,55,Feminino,0.27,20,7,57,Leve,Uso problemático de substâncias; Suporte social baixo
+82,SYN-20260806-000619,Moderada,31.6%,0.5%,18,Feminino,0.5,17,12,58,Moderado,Nenhum marcador extraído
+83,SYN-20260806-000463,Moderada,29.6%,0.4%,49,Masculino,0.49,16,12,58,Leve,Suporte social baixo
+84,SYN-20260806-000264,Moderada,26.6%,0.3%,40,Feminino,0.28,19,14,50,Leve,Suporte social baixo
+85,SYN-20260806-000740,Moderada,25.8%,1.3%,63,Feminino,0.14,21,6,41,Moderado,Suporte social baixo
+86,SYN-20260806-000259,Moderada,25.3%,0.7%,27,Feminino,0.28,17,5,60,Leve,Uso problemático de substâncias; Agravamento recente
+87,SYN-20260806-000021,Moderada,22.5%,0.5%,30,Masculino,0.43,22,8,41,Moderado,Suporte social baixo
+88,SYN-20260806-000579,Moderada,22.1%,0.5%,53,Feminino,0.43,16,9,63,Leve,Suporte social baixo
+89,SYN-20260806-000426,Moderada,19.7%,0.2%,50,Feminino,0.47,18,11,50,Leve,Suporte social baixo
+90,SYN-20260806-000553,Moderada,18.2%,1.3%,39,Feminino,0.47,18,12,49,Importante,Nenhum marcador extraído
+91,SYN-20260806-000605,Moderada,17.7%,0.5%,19,Feminino,0.7,20,8,39,Leve,Nenhum marcador extraído
+92,SYN-20260806-000159,Moderada,17.0%,0.4%,38,Masculino,0.66,18,13,49,Moderado,Internação prévia
+93,SYN-20260806-000313,Moderada,14.1%,0.5%,57,Feminino,0.46,19,13,57,Leve,Nenhum marcador extraído
+94,SYN-20260806-000678,Moderada,11.3%,0.4%,42,Masculino,0.71,5,12,39,Ausente,Nenhum marcador extraído
+95,SYN-20260806-000569,Moderada,11.1%,0.3%,50,Masculino,0.46,23,10,47,Leve,Nenhum marcador extraído
+96,SYN-20260806-000311,Moderada,11.0%,0.6%,27,Masculino,0.39,14,13,62,Leve,Internação prévia
+97,SYN-20260806-000676,Moderada,11.0%,0.3%,44,Masculino,0.27,11,11,49,Ausente,Uso problemático de substâncias; Suporte social baixo
+98,SYN-20260806-000162,Moderada,10.6%,0.3%,68,Masculino,0.5,10,7,35,Ausente,Internação prévia; Agravamento recente; Suporte social baixo
+99,SYN-20260806-000002,Moderada,8.1%,0.4%,56,Masculino,0.46,11,12,47,Moderado,Suporte social baixo
+100,SYN-20260806-000488,Moderada,7.7%,0.4%,57,Feminino,0.97,5,6,37,Leve,Suporte social baixo
+101,SYN-20260806-000660,Moderada,7.5%,0.3%,33,Feminino,0.29,11,9,59,Moderado,Nenhum marcador extraído
+102,SYN-20260806-000700,Moderada,6.9%,0.4%,38,Masculino,0.5,18,4,47,Moderado,Uso problemático de substâncias
+103,SYN-20260806-000528,Moderada,6.7%,0.2%,29,Masculino,0.42,21,9,54,Leve,Nenhum marcador extraído
+104,SYN-20260806-000111,Moderada,6.7%,0.2%,27,Masculino,0.71,8,5,33,Ausente,Suporte social baixo
+105,SYN-20260806-000529,Moderada,6.3%,0.2%,52,Feminino,0.88,11,7,46,Moderado,Suporte social baixo
+106,SYN-20260806-000078,Moderada,5.8%,0.3%,48,Outro ou não informado,0.25,17,10,38,Moderado,Suporte social baixo
+107,SYN-20260806-000220,Moderada,5.2%,2.0%,27,Feminino,0.19,11,12,51,Moderado,Sintomas psicóticos
+108,SYN-20260806-000718,Moderada,4.8%,0.3%,18,Feminino,0.24,18,9,46,Leve,Suporte social baixo
+109,SYN-20260806-000518,Moderada,4.7%,0.3%,27,Masculino,0.26,9,7,52,Ausente,Suporte social baixo
+110,SYN-20260806-000213,Moderada,4.2%,0.4%,48,Masculino,0.52,15,13,54,Ausente,Nenhum marcador extraído
+111,SYN-20260806-000248,Moderada,3.9%,0.6%,22,Masculino,0.67,14,3,33,Ausente,Nenhum marcador extraído
+112,SYN-20260806-000482,Moderada,3.9%,0.4%,38,Feminino,0.84,6,9,49,Leve,Nenhum marcador extraído
+113,SYN-20260806-000181,Moderada,3.7%,0.3%,54,Masculino,0.47,9,6,48,Moderado,Suporte social baixo
+114,SYN-20260806-000206,Moderada,3.5%,0.3%,26,Masculino,0.2,7,12,46,Leve,Suporte social baixo
+115,SYN-20260806-000032,Moderada,3.3%,0.2%,35,Feminino,0.49,18,10,54,Ausente,Nenhum marcador extraído
+116,SYN-20260806-000367,Moderada,3.3%,0.2%,36,Feminino,0.52,11,8,52,Ausente,Internação prévia; Suporte social baixo
+117,SYN-20260806-000757,Moderada,3.2%,0.5%,26,Masculino,0.68,12,1,33,Ausente,Nenhum marcador extraído
+118,SYN-20260806-000284,Moderada,3.0%,0.2%,43,Feminino,0.43,16,12,58,Leve,Nenhum marcador extraído
+119,SYN-20260806-000216,Moderada,2.8%,0.3%,49,Feminino,0.16,12,12,47,Ausente,Suporte social baixo
+120,SYN-20260806-000018,Moderada,2.8%,0.1%,55,Feminino,0.46,9,10,53,Leve,Suporte social baixo
+121,SYN-20260806-000790,Moderada,2.3%,0.3%,59,Feminino,0.26,15,5,49,Leve,Suporte social baixo
+122,SYN-20260806-000781,Moderada,2.1%,0.5%,28,Feminino,0.25,6,10,44,Moderado,Nenhum marcador extraído
+123,SYN-20260806-000504,Moderada,2.1%,0.6%,58,Masculino,0.07,6,4,36,Ausente,Suporte social baixo
+124,SYN-20260806-000736,Moderada,2.0%,0.3%,49,Masculino,0.62,13,6,36,Ausente,Suporte social baixo
+125,SYN-20260806-000042,Moderada,1.9%,0.3%,53,Feminino,0.77,6,6,41,Ausente,Nenhum marcador extraído
+126,SYN-20260806-000118,Moderada,1.7%,0.3%,61,Feminino,0.28,17,14,53,Leve,Nenhum marcador extraído
+127,SYN-20260806-000615,Moderada,1.6%,0.2%,46,Masculino,0.69,6,4,34,Ausente,Suporte social baixo
+128,SYN-20260806-000596,Moderada,1.6%,0.4%,25,Feminino,0.13,7,7,42,Ausente,Suporte social baixo
+129,SYN-20260806-000113,Moderada,1.6%,0.4%,56,Masculino,0.2,5,6,32,Ausente,Suporte social baixo
+130,SYN-20260806-000314,Moderada,1.2%,0.2%,39,Feminino,0.26,15,11,49,Moderado,Nenhum marcador extraído
+131,SYN-20260806-000005,Moderada,1.2%,0.2%,46,Masculino,0.47,13,6,38,Leve,Suporte social baixo
+132,SYN-20260806-000123,Moderada,0.9%,0.2%,33,Masculino,0.5,7,3,36,Ausente,Suporte social baixo
+133,SYN-20260806-000087,Moderada,0.9%,0.2%,39,Masculino,0.49,5,0,34,Ausente,Suporte social baixo
+134,SYN-20260806-000067,Moderada,0.9%,0.2%,32,Feminino,0.28,14,5,38,Leve,Suporte social baixo
+135,SYN-20260806-000115,Baixa,29.0%,0.4%,29,Feminino,0.26,18,15,55,Ausente,Nenhum marcador extraído
+136,SYN-20260806-000380,Baixa,5.5%,0.3%,66,Masculino,0.65,11,6,50,Ausente,Uso problemático de substâncias
+137,SYN-20260806-000336,Baixa,1.7%,0.2%,62,Masculino,0.69,2,1,33,Ausente,Nenhum marcador extraído
+138,SYN-20260806-000602,Baixa,1.6%,1.1%,59,Feminino,0.18,11,10,49,Ausente,Sintomas psicóticos
+139,SYN-20260806-000214,Baixa,1.2%,0.1%,53,Feminino,0.51,14,4,61,Leve,Nenhum marcador extraído
+140,SYN-20260806-000362,Baixa,1.0%,0.2%,27,Masculino,0.38,16,8,54,Leve,Nenhum marcador extraído
+141,SYN-20260806-000083,Baixa,0.8%,0.1%,39,Masculino,0.21,4,6,63,Leve,Nenhum marcador extraído
+142,SYN-20260806-000441,Baixa,0.8%,0.5%,38,Masculino,0.27,10,9,56,Leve,Sintomas psicóticos
+143,SYN-20260806-000395,Baixa,0.7%,0.1%,40,Masculino,0.47,11,12,43,Ausente,Nenhum marcador extraído
+144,SYN-20260806-000399,Baixa,0.4%,0.1%,71,Masculino,0.43,7,10,48,Ausente,Nenhum marcador extraído
+145,SYN-20260806-000233,Baixa,0.3%,0.0%,30,Feminino,0.26,16,9,35,Ausente,Nenhum marcador extraído
+146,SYN-20260806-000329,Baixa,0.2%,0.0%,36,Masculino,0.23,12,3,50,Leve,Nenhum marcador extraído
+147,SYN-20260806-000742,Baixa,0.2%,0.0%,28,Masculino,0.27,9,10,46,Ausente,Nenhum marcador extraído
+148,SYN-20260806-000514,Baixa,0.2%,0.0%,20,Masculino,0.23,6,5,46,Ausente,Internação prévia
+149,SYN-20260806-000506,Baixa,0.2%,0.0%,36,Feminino,0.22,9,4,38,Ausente,Nenhum marcador extraído
+150,SYN-20260806-000782,Baixa,0.2%,0.0%,36,Masculino,0.24,12,6,33,Leve,Nenhum marcador extraído
+151,SYN-20260806-000493,Baixa,0.2%,0.0%,35,Feminino,0.2,11,4,37,Leve,Nenhum marcador extraído
+152,SYN-20260806-000185,Baixa,0.2%,0.0%,60,Feminino,0.52,12,5,34,Leve,Nenhum marcador extraído
+153,SYN-20260806-000586,Baixa,0.1%,0.0%,38,Outro ou não informado,0.23,5,8,42,Ausente,Nenhum marcador extraído
+154,SYN-20260806-000085,Baixa,0.1%,0.0%,55,Feminino,0.22,9,8,38,Ausente,Nenhum marcador extraído
+155,SYN-20260806-000636,Baixa,0.1%,0.0%,55,Feminino,0.25,1,2,36,Ausente,Nenhum marcador extraído
+156,SYN-20260806-000141,Baixa,0.1%,0.0%,38,Masculino,0.44,8,7,34,Ausente,Nenhum marcador extraído
+157,SYN-20260806-000601,Baixa,0.1%,0.0%,48,Masculino,0.21,5,5,33,Ausente,Nenhum marcador extraído
+158,SYN-20260806-000538,Baixa,0.1%,0.0%,35,Masculino,0.25,8,0,36,Leve,Nenhum marcador extraído
+159,SYN-20260806-000278,Baixa,0.1%,0.0%,34,Feminino,0.49,2,5,36,Leve,Nenhum marcador extraído
+160,SYN-20260806-000418,Baixa,0.1%,0.0%,45,Masculino,0.47,5,6,39,Ausente,Nenhum marcador extraído

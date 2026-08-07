@@ -1,0 +1,25 @@
+{
+  "extractors": [
+    {
+      "extractor": "primary",
+      "n": 800,
+      "macro_precision": 1.0,
+      "macro_recall": 1.0,
+      "macro_f1": 1.0,
+      "micro_precision": 1.0,
+      "micro_recall": 1.0,
+      "micro_f1": 1.0,
+      "omission_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "qualification_error_rate": 0.0695252176770166,
+      "failed_extractions": 0,
+      "invalid_or_failed_extractions": 0,
+      "retry_count": 0
+    }
+  ],
+  "bootstrap_repetitions": 50,
+  "human_annotation": {
+    "available": false
+  },
+  "interpretation": "A referência sintética mede preservação controlada; validação humana independente permanece necessária para validade externa."
+}

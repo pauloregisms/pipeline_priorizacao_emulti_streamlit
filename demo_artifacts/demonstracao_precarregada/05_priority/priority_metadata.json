@@ -1,0 +1,35 @@
+{
+  "priority_order": [
+    "baixa",
+    "moderada",
+    "alta",
+    "urgente"
+  ],
+  "interpretation": "prioridade de referência simulada; não é prioridade clínica real",
+  "rule_version": "priority-matrix-v2-draft",
+  "validation_status": "PENDENTE DE VALIDAÇÃO DE CONTEÚDO",
+  "rule_parameters": {
+    "version": "priority-matrix-v2-draft",
+    "validation_status": "PENDENTE DE VALIDAÇÃO DE CONTEÚDO",
+    "phq_moderate": 10,
+    "phq_high": 20,
+    "gad_moderate": 10,
+    "gad_high": 15,
+    "stai_moderate": 50,
+    "stai_high": 65,
+    "vulnerability_high": 0.66,
+    "high_evidence_weight": 0.85,
+    "moderate_evidence_weight": 0.35,
+    "high_priority_cutoff": 3.0,
+    "moderate_priority_cutoff": 1.2,
+    "nonurgent_label_noise": 0.0,
+    "source_note": "Substituir por matriz de prioridade validada por especialistas."
+  },
+  "seed": 20263806,
+  "class_distribution": {
+    "alta": 361,
+    "baixa": 147,
+    "moderada": 249,
+    "urgente": 43
+  }
+}

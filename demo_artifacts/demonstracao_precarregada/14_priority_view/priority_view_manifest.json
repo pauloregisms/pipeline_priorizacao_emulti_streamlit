@@ -1,0 +1,18 @@
+{
+  "dataset": "03_operacional_marcadores_extraidos",
+  "selected_model": "xgboost",
+  "model_selection_criterion": "maior F1 macro na validação cruzada aninhada (desenvolvimento)",
+  "predictions_source": "10_modeling/03_operacional_marcadores_extraidos/xgboost/final_test_predictions.csv",
+  "n_profiles_in_final_test": 160,
+  "priority_distribution": {
+    "Alta": 69,
+    "Moderada": 60,
+    "Baixa": 26,
+    "Urgente": 5
+  },
+  "include_reference_simulated": false,
+  "csv": "classification_queue.csv",
+  "html": "classification_queue.html",
+  "traceability": "prediction_traceability.csv",
+  "warning": "Tabela para inspeção de perfis sintéticos. Não representa fila clínica, prioridade de pacientes reais ou recomendação assistencial."
+}

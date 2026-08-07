@@ -1,0 +1,49 @@
+cff-version: 1.2.0
+message: "Se você utilizar este software, cite-o usando os metadados deste arquivo."
+type: software
+date-released: "2026-06-26"
+
+title: "Pipeline Sintético de Priorização para e-Multi"
+
+abstract: >
+  Pipeline computacional para geração de perfis sintéticos, simulação de
+  instrumentos psicométricos, produção de narrativas clínicas sintéticas,
+  extração de marcadores e classificação de prioridade de referência simulada
+  para encaminhamentos em saúde mental no contexto da Atenção Primária à Saúde
+  e da equipe e-Multi.
+
+authors:
+  - family-names: "Santos"
+    given-names: "Renata Alves dos"
+    affiliation: >
+      Mestrado Profissional em Saúde da Família (MPSF), Programa de
+      Pós-Graduação em Saúde da Família (PPGSF), Universidade Estadual
+      Vale do Acaraú (UVA), Sobral, Ceará, Brasil
+
+  - family-names: "Sousa"
+    given-names: "Paulo Regis Menezes"
+    affiliation: >
+      Universidade Estadual Vale do Acaraú (UVA), Sobral, Ceará, Brasil
+
+version: "0.1.0"
+
+license: Apache-2.0
+
+repository-code: "https://github.com/pauloregisms/pipeline_priorizacao_emulti"
+
+keywords:
+  - "saúde mental"
+  - "atenção primária à saúde"
+  - "e-Multi"
+  - "dados sintéticos"
+  - "aprendizado de máquina"
+  - "processamento de linguagem natural"
+  - "simulação computacional"
+
+contact:
+  - family-names: "Santos"
+    given-names: "Renata Alves dos"
+    affiliation: >
+      Mestrado Profissional em Saúde da Família (MPSF), Programa de
+      Pós-Graduação em Saúde da Família (PPGSF), Universidade Estadual
+      Vale do Acaraú (UVA), Sobral, Ceará, Brasil

@@ -1,0 +1,10 @@
+{
+  "run_id": "demonstracao_precarregada",
+  "config_hash": "3cefd583361e0404e397c1f4b7d3082c968f54e5a224714e773443e1ecd53d31",
+  "config_path": "/workspace/scratch/81f9cba8deed/work/pipeline_priorizacao_emulti-main/config/demo.yaml",
+  "project": {
+    "name": "pipeline_priorizacao_emulti",
+    "run_description": "Execução sintética pré-carregada para demonstração acadêmica",
+    "parameter_status": "DEMONSTRAÇÃO — PARÂMETROS ILUSTRATIVOS, SEM VALIDADE CLÍNICA"
+  }
+}

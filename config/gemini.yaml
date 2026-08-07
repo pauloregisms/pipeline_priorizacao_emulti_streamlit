@@ -1,0 +1,38 @@
+# Configuração executável do provedor Gemini.
+# Ela herda os parâmetros científicos de base.yaml e altera somente a geração textual.
+# Nunca inclua a chave de API neste arquivo. Defina GEMINI_API_KEY no ambiente.
+extends: "base.yaml"
+
+narrative:
+  provider: "gemini"
+  prompt_version: "gemini_soap_v1"
+  max_retries: 2
+  gemini:
+    # Identificador estável registrado em artifacts/<run_id>/04_narratives/.
+    generator_id: "gemini-api-gemini-3.5-flash"
+    # Ajuste somente para um modelo disponível para sua chave e cota.
+    model_id: "gemini-3.5-flash"
+    # Nome da variável de ambiente; o valor secreto nunca deve entrar neste YAML.
+    api_key_env: "GEMINI_API_KEY"
+    # O SDK aceita semente por requisição; a repetibilidade ainda é de melhor esforço.
+    temperature: 1.0
+    max_output_tokens: 500
+    retry_backoff_seconds: 2.0
+
+extraction:
+  provider: "gemini"
+  extractor_id: "gemini-api-gemini-3.5-flash-extractor-v1"
+  ontology_version: "ontology_v2"
+  prompt_version: "extracao_marcadores_v1"
+  max_retries: 2
+  stability:
+    enabled: true
+    n_records: 50
+    repetitions: 3
+  gemini:
+    extractor_id: "gemini-api-gemini-3.5-flash-extractor-v1"
+    model_id: "gemini-3.5-flash"
+    api_key_env: "GEMINI_API_KEY"
+    temperature: 0.0
+    max_output_tokens: 2200
+    retry_backoff_seconds: 2.0

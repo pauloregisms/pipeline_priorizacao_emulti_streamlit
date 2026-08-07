@@ -1,0 +1,6 @@
+check,passed,details
+idade_dentro_do_intervalo,True,Intervalo esperado: 18--80
+vulnerabilidade_entre_0_e_1,True,O índice de vulnerabilidade deve estar normalizado.
+planejamento_requer_ideacao,True,Não deve existir planejamento sem ideação no cenário-base.
+autoagressao_requer_planejamento,True,Não deve existir autoagressão iminente sem planejamento no cenário-base.
+identificadores_unicos,True,Cada indivíduo sintético deve possuir identificador único.
