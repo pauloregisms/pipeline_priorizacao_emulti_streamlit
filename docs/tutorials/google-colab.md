@@ -66,31 +66,33 @@ print(os.getcwd())
 
 O cenário-base usa CPU. Não há necessidade de GPU, porque a geração de narrativa inicial é simulada por templates e os modelos são tabulares.
 
-## 6A. Opcional: testar o provedor Gemini
+## 6A. Opcional: testar um provedor LLM
 
-O cenário-base continua usando o simulador local. Para usar a Gemini API, informe a
-chave por entrada oculta e execute primeiro o cenário de teste curto:
+O cenário-base continua usando o simulador local. Para usar um serviço externo,
+configure `backend`, `model_id` e `api_key_env` em uma cópia de
+`config/llm_smoke.yaml`. Depois informe a chave por entrada oculta com exatamente
+o nome declarado em `api_key_env`:
 
 ```python
 import os
 from getpass import getpass
 
-os.environ["GEMINI_API_KEY"] = getpass("Cole sua chave Gemini: ")
+os.environ["LLM_API_KEY"] = getpass("Cole sua chave do provedor: ")
 ```
 
 ```python
 !python scripts/run_pipeline.py \
-  --config config/gemini_smoke.yaml \
-  --run-id gemini_smoke \
+  --config config/llm_smoke.yaml \
+  --run-id llm_smoke \
   --skip-explanations \
   --skip-report \
-  --stop-after 04_generate_narratives.py
+  --stop-after 08_validate_extraction.py
 ```
 
 Não salve a chave no notebook e não compartilhe a célula preenchida. Depois de
-inspecionar `artifacts/gemini_smoke/04_narratives/`, a execução completa pode usar
-`config/gemini.yaml`. Consulte também [Como gerar narrativas com o provedor
-Gemini](../how-to/usar-provedor-gemini.md).
+inspecionar `artifacts/llm_smoke/`, a execução completa pode usar uma cópia de
+`config/llm.yaml`. Consulte também [Como usar um provedor
+LLM](../how-to/usar-provedor-llm.md).
 
 ## 7. Persistir resultados no Drive
 

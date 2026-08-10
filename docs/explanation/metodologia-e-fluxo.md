@@ -31,7 +31,7 @@ flowchart LR
 3. `03_quality_control_base.py` valida faixas, somas, consistência e propriedades descritivas.
 4. `04_generate_narratives.py` gera `narrativa_clinica` a partir de `dados_estruturados`, `indicadores_psicometricos` e `marcadores_origem`.
 5. `05_assign_reference_priority.py` gera `prioridade_referencia` por uma matriz de regras simuladas.
-6. `06_extract_markers.py` transforma somente `narrativa_clinica` em `marcadores_extraidos`, por Gemini no experimento principal e por regras como comparador independente.
+6. `06_extract_markers.py` transforma somente `narrativa_clinica` em `marcadores_extraidos`, pelo backend LLM configurado no experimento principal e por regras como comparador independente.
 7. `07`–`08` medem presença e qualificadores, omissão, alucinação, estabilidade, bootstrap e concordância humana quando disponível.
 8. As etapas seguintes formam conjuntos simétricos, treinam modelos, avaliam robustez e geram relatório.
 

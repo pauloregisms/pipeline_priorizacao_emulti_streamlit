@@ -26,8 +26,8 @@ e da equipe e-Multi.
 | Banca ou avaliador acadêmico | [Demonstração Streamlit](docs/tutorials/demonstracao-streamlit.md) |
 | Novo desenvolvedor | [Visão geral do projeto](docs/explanation/visao-geral.md) e [Primeira execução](docs/tutorials/primeira-execucao.md) |
 | Pesquisador que vai alterar o cenário | [Como criar um cenário](docs/how-to/criar-cenario.md) e [Configuração YAML](docs/reference/configuracao.md) |
-| Desenvolvedor que vai gerar narrativas com Gemini | [Usar o provedor Gemini](docs/how-to/usar-provedor-gemini.md) e [Contratos de dados](docs/reference/contratos-de-dados.md) |
-| Desenvolvedor que vai integrar outro LLM | [Como adicionar um provedor de LLM](docs/how-to/adicionar-provedor-llm.md) e [Contratos de dados](docs/reference/contratos-de-dados.md) |
+| Pesquisador que vai usar um modelo de linguagem | [Usar um provedor LLM](docs/how-to/usar-provedor-llm.md) e [Contratos de dados](docs/reference/contratos-de-dados.md) |
+| Desenvolvedor que vai integrar outro endpoint | [Como configurar outro provedor de LLM](docs/how-to/adicionar-provedor-llm.md) e [Referência da camada LLM](docs/reference/provedor-llm.md) |
 | Pessoa responsável por regras de prioridade | [Matriz de prioridade](docs/reference/matriz-de-prioridade.md) e [ADR-003](docs/decisions/ADR-003-prioridade-simulada-ordinal.md) |
 | Revisor de arquitetura | [arc42 resumido](docs/architecture/arc42.md) e diagramas [C4](docs/architecture/c4-contexto.md) |
 
@@ -39,9 +39,9 @@ A documentação completa está organizada no diretório [`docs/`](docs/index.md
 2. cria uma gravidade latente `gravidade_latente_auditoria` para o gerador, preservada apenas para auditoria;
 3. simula respostas por item e totais de PHQ-9, GAD-7 e IDATE-Estado;
 4. verifica faixas e regras de consistência da base;
-5. produz narrativa SOAP com provedor configurável (`template` para teste local ou Gemini para o experimento principal);
+5. produz narrativa SOAP com provedor configurável (`template` local ou `llm` para um backend definido no YAML);
 6. constrói `prioridade_referencia`, uma prioridade de referência simulada, **após** gerar a narrativa;
-7. extrai marcadores qualificados por provedor independente; Gemini é comparado a uma linha de base por regras;
+7. extrai marcadores qualificados por provedor independente; um LLM configurado pode ser comparado à linha de base por regras;
 8. compara três conjuntos analíticos: `dados_estruturados + indicadores_psicometricos`, `dados_estruturados + indicadores_psicometricos + marcadores_origem` e `dados_estruturados + indicadores_psicometricos + marcadores_extraidos`;
 9. avalia regra-base, regressão logística ordinal, Random Forest e XGBoost;
 10. produz métricas de classificação, ordinalidade, calibração, robustez e explicabilidade;
@@ -92,7 +92,7 @@ python -m pip install -r requirements.txt
 Para uma instalação reproduzível com o arquivo de lock e as dependências de teste:
 
 ```bash
-uv sync --extra dev --extra gemini --locked
+uv sync --extra dev --extra llm --locked
 ```
 
 Para a execução detalhada, consulte o [tutorial de primeira execução](docs/tutorials/primeira-execucao.md). Para uso em notebook, consulte [Google Colab](docs/tutorials/google-colab.md).
@@ -155,31 +155,32 @@ Cada execução é gravada em `artifacts/<run_id>/`. Os principais produtos são
 
 Consulte também [Como visualizar a classificação final](docs/how-to/visualizar-classificacao-final.md).
 
-## Geração de narrativas com Gemini (opcional)
+## Geração e extração com modelo de linguagem (opcional)
 
-A geração narrativa permanece desacoplada em `src/emulti_pipeline/narratives.py`. Além do simulador local `TemplateNarrativeGenerator`, o projeto inclui `GeminiNarrativeGenerator`, selecionado por `config/gemini.yaml`.
+A camada `llm` é independente do fornecedor. `backend`, `model_id`, `api_key_env`, formato de resposta e parâmetros de chamada ficam em `config/llm.yaml`. A mesma implementação atende serviços compatíveis com LiteLLM, como Google AI, OpenAI e Anthropic, sem alterar as fábricas ou os scripts do pipeline.
 
-A integração Gemini:
+A integração:
 
-- lê a chave somente da variável de ambiente `GEMINI_API_KEY`;
-- solicita saída JSON estruturada com os campos SOAP `subjective` e `assessment`;
-- registra provedor, modelo, timestamp, versão do prompt, parâmetros, semente, hash do prompt e retentativas;
-- bloqueia recursivamente campos de prioridade antes da chamada;
+- lê a credencial somente da variável de ambiente nomeada no YAML;
+- solicita saída JSON estruturada e valida o contrato localmente;
+- registra backend, modelo, timestamp, versão do prompt, parâmetros, hash do prompt e retentativas;
+- bloqueia recursivamente campos de prioridade antes da geração;
+- envia ao extrator apenas o identificador sintético e a narrativa;
 - nunca recebe ou deve receber dados reais de pacientes.
 
-Faça primeiro o teste curto:
+Configure `config/llm.yaml` e faça primeiro o teste curto:
 
 ```bash
-export GEMINI_API_KEY='cole-a-chave-somente-no-terminal'
+export LLM_API_KEY='cole-a-chave-somente-no-terminal'
 python scripts/run_pipeline.py \
-  --config config/gemini_smoke.yaml \
-  --run-id gemini_smoke \
+  --config config/llm_smoke.yaml \
+  --run-id llm_smoke \
   --skip-explanations \
   --skip-report \
-  --stop-after 04_generate_narratives.py
+  --stop-after 08_validate_extraction.py
 ```
 
-Consulte [Usar o provedor Gemini](docs/how-to/usar-provedor-gemini.md). Para criar outro adaptador, consulte [Como adicionar um provedor de LLM](docs/how-to/adicionar-provedor-llm.md).
+O nome real da variável deve coincidir com `api_key_env`. Consulte [Usar um provedor LLM](docs/how-to/usar-provedor-llm.md) e [Referência da camada LLM](docs/reference/provedor-llm.md).
 
 ## Contribuição e documentação
 

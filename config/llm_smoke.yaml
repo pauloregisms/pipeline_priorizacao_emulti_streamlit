@@ -1,0 +1,22 @@
+# Teste curto e genérico de geração e extração por LLM.
+extends: "llm.yaml"
+
+simulation:
+  n_records: 20
+
+annotation:
+  n_per_priority: 3
+
+extraction:
+  stability:
+    enabled: false
+
+execution:
+  action: "llm_smoke"
+  run_id: "llm_smoke"
+  stop_after: "08_validate_extraction.py"
+  run_tests: true
+  validate_streamlit_artifacts: false
+  replace_existing_run: true
+  save_results: true
+  package_project: false

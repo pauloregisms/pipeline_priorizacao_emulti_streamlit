@@ -1,38 +1,59 @@
-# Configuração executável do provedor Gemini.
-# Ela herda os parâmetros científicos de base.yaml e altera somente a geração textual.
-# Nunca inclua a chave de API neste arquivo. Defina GEMINI_API_KEY no ambiente.
-extends: "base.yaml"
+# Configuração do experimento com Gemini pela camada LLM unificada.
+#
+# A seleção do fornecedor ocorre somente neste arquivo. O código Python continua
+# independente de Gemini, OpenAI, Anthropic ou outro backend compatível.
+# O modelo gemini-3.5-flash foi mantido para corresponder ao protocolo descrito
+# na dissertação. Uma troca de versão deve gerar outro YAML e outro run_id.
+
+extends: "llm.yaml"
 
 narrative:
-  provider: "gemini"
-  prompt_version: "gemini_soap_v1"
+  provider: "llm"
+  prompt_version: "llm_soap_v1"
   max_retries: 2
-  gemini:
-    # Identificador estável registrado em artifacts/<run_id>/04_narratives/.
-    generator_id: "gemini-api-gemini-3.5-flash"
-    # Ajuste somente para um modelo disponível para sua chave e cota.
+  llm:
+    backend: "gemini"
     model_id: "gemini-3.5-flash"
-    # Nome da variável de ambiente; o valor secreto nunca deve entrar neste YAML.
+    generator_id: "llm-gemini-3.5-flash-narrative"
     api_key_env: "GEMINI_API_KEY"
-    # O SDK aceita semente por requisição; a repetibilidade ainda é de melhor esforço.
+    response_format: "json_schema"
     temperature: 1.0
     max_output_tokens: 500
     retry_backoff_seconds: 2.0
+    send_seed: true
+    request_options: {}
 
 extraction:
-  provider: "gemini"
-  extractor_id: "gemini-api-gemini-3.5-flash-extractor-v1"
-  ontology_version: "ontology_v2"
+  provider: "llm"
+  extractor_id: "llm-gemini-3.5-flash-extractor"
+  ontology_version: "ontology_v1"
   prompt_version: "extracao_marcadores_v1"
   max_retries: 2
   stability:
     enabled: true
     n_records: 50
     repetitions: 3
-  gemini:
-    extractor_id: "gemini-api-gemini-3.5-flash-extractor-v1"
+  llm:
+    backend: "gemini"
     model_id: "gemini-3.5-flash"
+    extractor_id: "llm-gemini-3.5-flash-extractor"
     api_key_env: "GEMINI_API_KEY"
+    response_format: "json_schema"
     temperature: 0.0
     max_output_tokens: 2200
     retry_backoff_seconds: 2.0
+    send_seed: true
+    request_options: {}
+
+execution:
+  action: "executar"
+  run_id: "experimento_gemini_3_5_flash"
+  stop_after: null
+  models: "all"
+  skip_explanations: false
+  skip_report: false
+  run_tests: true
+  validate_streamlit_artifacts: true
+  replace_existing_run: false
+  save_results: true
+  package_project: true

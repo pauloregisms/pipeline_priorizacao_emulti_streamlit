@@ -60,7 +60,7 @@ class NarrativeResponse:
 - `generation_metadata` deve permitir auditoria sem expor credenciais.
 - Um provedor de API deve registrar modelo, versão quando disponível, parâmetros, timestamp, hash do prompt e política de retentativa.
 - `generation_metadata` não pode conter chave de API, cabeçalhos HTTP, prompt bruto ou outros segredos.
-- O adaptador Gemini solicita JSON estruturado com `subjective` e `assessment`, depois constrói `narrativa_clinica`.
+- O adaptador LLM solicita JSON estruturado com `subjective` e `assessment`, depois constrói `narrativa_clinica`.
 
 ## Perfil sintético (`profiles.csv`)
 

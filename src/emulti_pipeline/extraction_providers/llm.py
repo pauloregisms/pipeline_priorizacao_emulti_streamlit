@@ -1,16 +1,14 @@
-"""Extrator Gemini independente, limitado exclusivamente ao texto da narrativa."""
+"""Extrator clínico por LLM independente de fornecedor."""
 
 from __future__ import annotations
 
-import json
-import os
-import re
 import time
 from datetime import datetime, timezone
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping
 
 import pandas as pd
 
+from ..llm import StructuredLLMClient
 from ..markers import (
     CERTAINTY_VALUES,
     EXPERIENCER_VALUES,
@@ -47,6 +45,7 @@ _MARKER_SCHEMA: dict[str, Any] = {
         "experiencer",
         "evidence",
     ],
+    "additionalProperties": False,
 }
 
 EXTRACTION_RESPONSE_SCHEMA: dict[str, Any] = {
@@ -56,76 +55,58 @@ EXTRACTION_RESPONSE_SCHEMA: dict[str, Any] = {
             "type": "object",
             "properties": {marker: _MARKER_SCHEMA for marker in MARKER_NAMES},
             "required": list(MARKER_NAMES),
+            "additionalProperties": False,
         }
     },
     "required": ["markers"],
+    "additionalProperties": False,
 }
 
 SYSTEM_INSTRUCTION = """Você extrai informações exclusivamente de uma narrativa clínica sintética.
 Não use conhecimento externo, não complete lacunas e não infira prioridade, diagnóstico ou conduta.
 Para cada marcador da ontologia, registre presença, negação, temporalidade, severidade, certeza,
 experienciador e o menor trecho literal que sustenta a saída. Se não houver evidência, use present=0,
-negated=0, remote_present=0, temporality=nao_especificado, severity=ausente, severity_code=0, certainty=afirmado,
-experiencer=paciente e evidence vazio. Retorne somente o JSON solicitado."""
+negated=0, remote_present=0, temporality=nao_especificado, severity=ausente, severity_code=0,
+certainty=afirmado, experiencer=paciente e evidence vazio. Retorne somente o JSON solicitado."""
 
 
-class GeminiClinicalExtractor:
-    """Extrai marcadores com Gemini sem receber dados estruturados, origem ou rótulo."""
+class LLMClinicalExtractor:
+    """Extrai marcadores usando apenas a narrativa e o LLM declarado no YAML."""
 
     def __init__(
         self,
         *,
-        model_id: str,
+        llm_configuration: Mapping[str, Any],
         extractor_id: str,
         ontology_version: str,
         prompt_version: str,
-        api_key_env: str = "GEMINI_API_KEY",
-        temperature: float = 0.0,
+        temperature: float | None = 0.0,
         max_output_tokens: int = 2200,
         max_retries: int = 2,
         retry_backoff_seconds: float = 2.0,
         base_seed: int = 0,
-        client: Any | None = None,
+        llm_client: StructuredLLMClient | None = None,
+        completion_callable: Callable[..., Any] | None = None,
         api_key: str | None = None,
     ) -> None:
-        if not model_id.strip():
-            raise ValueError("model_id do extrator Gemini não pode ser vazio.")
-        self.model_id = model_id
+        if not extractor_id.strip():
+            raise ValueError("extractor_id não pode ser vazio.")
         self.extractor_id = extractor_id
         self.ontology_version = ontology_version
         self.prompt_version = prompt_version
-        self.api_key_env = api_key_env
-        self.temperature = float(temperature)
+        self.temperature = temperature
         self.max_output_tokens = int(max_output_tokens)
         self.max_retries = int(max_retries)
         self.retry_backoff_seconds = float(retry_backoff_seconds)
         self.base_seed = int(base_seed)
         self.audit_records: list[dict[str, Any]] = []
-
-        if client is not None:
-            self._client = client
-        else:
-            resolved_api_key = api_key or os.getenv(api_key_env)
-            if not resolved_api_key:
-                raise EnvironmentError(
-                    f"A variável de ambiente {api_key_env!r} não foi definida para a extração Gemini."
-                )
-            try:
-                from google import genai
-            except ImportError as error:  # pragma: no cover
-                raise ImportError("Instale google-genai para usar a extração Gemini.") from error
-            self._client = genai.Client(api_key=resolved_api_key)
-
-    @staticmethod
-    def _parse_json(raw_text: str) -> Mapping[str, Any]:
-        text = raw_text.strip()
-        if text.startswith("```"):
-            text = re.sub(r"^```(?:json)?\s*", "", text, flags=re.IGNORECASE)
-            text = re.sub(r"\s*```$", "", text)
-        parsed = json.loads(text)
-        if not isinstance(parsed, Mapping) or not isinstance(parsed.get("markers"), Mapping):
-            raise ValueError("Resposta de extração sem objeto markers.")
-        return parsed
+        self._llm = llm_client or StructuredLLMClient(
+            llm_configuration,
+            completion_callable=completion_callable,
+            api_key=api_key,
+        )
+        self.model_id = self._llm.model_id
+        self.backend = self._llm.backend
 
     @staticmethod
     def _prompt(narrative: str) -> str:
@@ -148,26 +129,22 @@ class GeminiClinicalExtractor:
         )
         last_error: Exception | None = None
         for attempt in range(self.max_retries + 1):
-            timestamp = datetime.now(timezone.utc).isoformat()
+            request_timestamp = datetime.now(timezone.utc).isoformat()
             try:
-                response = self._client.models.generate_content(
-                    model=self.model_id,
-                    contents=prompt,
-                    config={
-                        "system_instruction": SYSTEM_INSTRUCTION,
-                        "temperature": self.temperature,
-                        "max_output_tokens": self.max_output_tokens,
-                        "seed": seed,
-                        "response_mime_type": "application/json",
-                        "response_json_schema": EXTRACTION_RESPONSE_SCHEMA,
-                    },
+                result = self._llm.generate_json(
+                    system_instruction=SYSTEM_INSTRUCTION,
+                    prompt=prompt,
+                    response_schema=EXTRACTION_RESPONSE_SCHEMA,
+                    schema_name="emulti_extraction",
+                    temperature=self.temperature,
+                    max_output_tokens=self.max_output_tokens,
+                    seed=seed,
                 )
-                raw_text = getattr(response, "text", None)
-                if not isinstance(raw_text, str) or not raw_text.strip():
-                    raise ValueError("Resposta Gemini vazia na extração.")
-                parsed = self._parse_json(raw_text)
+                markers = result.data.get("markers")
+                if not isinstance(markers, Mapping):
+                    raise ValueError("Resposta de extração sem objeto markers.")
                 normalized = {
-                    marker: normalize_marker(marker, parsed["markers"].get(marker, {}))
+                    marker: normalize_marker(marker, markers.get(marker, {}))
                     for marker in MARKER_NAMES
                 }
                 record = {
@@ -176,11 +153,14 @@ class GeminiClinicalExtractor:
                     "ontology_version": self.ontology_version,
                     "extraction_status": "success",
                     "retry_count": attempt,
-                    "model_id": self.model_id,
+                    "backend": result.backend,
+                    "model_id": result.model_id,
+                    "response_model": result.response_model,
+                    "finish_reason": result.finish_reason,
                     "prompt_version": self.prompt_version,
                     "prompt_hash": prompt_hash,
-                    "raw_response_hash": json_hash(raw_text),
-                    "request_timestamp_utc": timestamp,
+                    "raw_response_hash": json_hash(result.raw_text),
+                    "request_timestamp_utc": request_timestamp,
                     **flatten_markers(normalized, "marcadores_extraidos_"),
                 }
                 self.audit_records.append(
@@ -188,9 +168,12 @@ class GeminiClinicalExtractor:
                         "patient_id": patient_id,
                         "status": "success",
                         "retry_count": attempt,
+                        "backend": result.backend,
+                        "model_id": result.model_id,
                         "prompt_hash": prompt_hash,
-                        "raw_response_hash": json_hash(raw_text),
-                        "raw_response": raw_text,
+                        "raw_response_hash": json_hash(result.raw_text),
+                        "raw_response": result.raw_text,
+                        "usage": result.usage,
                     }
                 )
                 return record
@@ -205,6 +188,8 @@ class GeminiClinicalExtractor:
                 "patient_id": patient_id,
                 "status": "failed",
                 "retry_count": self.max_retries,
+                "backend": self.backend,
+                "model_id": self.model_id,
                 "prompt_hash": prompt_hash,
                 "error_type": error_type,
             }
@@ -216,7 +201,10 @@ class GeminiClinicalExtractor:
             "ontology_version": self.ontology_version,
             "extraction_status": "failed",
             "retry_count": self.max_retries,
+            "backend": self.backend,
             "model_id": self.model_id,
+            "response_model": None,
+            "finish_reason": None,
             "prompt_version": self.prompt_version,
             "prompt_hash": prompt_hash,
             "raw_response_hash": "",

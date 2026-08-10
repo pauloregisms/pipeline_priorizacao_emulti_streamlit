@@ -54,7 +54,7 @@ def _load_config(path: Path, visited: set[Path]) -> dict[str, Any]:
 def load_config(path: str | Path) -> dict[str, Any]:
     """Lê um YAML, resolve ``extends`` e devolve uma cópia independente.
 
-    O mecanismo permite criar configurações de provedor, como ``config/gemini.yaml``,
+    O mecanismo permite criar configurações de provedor, como ``config/llm.yaml``,
     sem duplicar todos os parâmetros científicos de ``config/base.yaml``.
     """
     return copy.deepcopy(_load_config(Path(path), set()))

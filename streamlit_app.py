@@ -6,6 +6,7 @@ import html
 import json
 import sys
 from pathlib import Path
+from urllib.parse import quote
 
 import pandas as pd
 import streamlit as st
@@ -13,6 +14,37 @@ import streamlit as st
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 SRC_ROOT = PROJECT_ROOT / "src"
+
+# Nomes dos arquivos consumidos ou oferecidos para download pela demonstração.
+# Alterações de nomenclatura devem ser feitas somente neste dicionário.
+DEMO_FILE_NAMES = {
+    "downloads": {
+        "report": "relatorio_execucao_demo.md",
+        "configuration": "configuracao_resolvida_demo.yaml",
+        "artifacts": "artefatos_demonstracao_precarregada.zip",
+    },
+    "modeling": {
+        "metrics": "final_test_metrics.csv",
+        "per_class": "final_test_per_class.csv",
+        "calibration": "final_test_calibration_curves.csv",
+    },
+    "explanations": {
+        "ordinal_coefficients": "ordinal_coefficients.csv",
+        "shap_importance": "global_shap_importance_highurgent.csv",
+    },
+}
+
+# O identificador é usado na URL e o texto é apresentado no menu lateral.
+NAVIGATION_ITEMS = {
+    "visao-geral": "Visão geral",
+    "perfis-sinteticos": "Perfis sintéticos",
+    "qualidade-extracao": "Qualidade e extração",
+    "modelagem": "Modelagem",
+    "interpretabilidade": "Interpretabilidade",
+    "rastreabilidade": "Rastreabilidade",
+}
+DEFAULT_PAGE = "visao-geral"
+
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
@@ -49,6 +81,13 @@ st.markdown(
       .narrative {background:#f8fafc; border:1px solid #cbd5e1; border-radius:.55rem;
                   padding:1rem 1.1rem; line-height:1.55; white-space:pre-wrap;}
       .small-note {color:#475569; font-size:.9rem;}
+      .sidebar-menu {display:flex; flex-direction:column; gap:.3rem; margin:.2rem 0 .9rem 0;}
+      .sidebar-menu a {display:block; padding:.58rem .72rem; border-radius:.45rem;
+                       color:#334155; text-decoration:none; border:1px solid transparent;
+                       font-weight:500; line-height:1.25;}
+      .sidebar-menu a:hover {background:#f1f5f9; border-color:#cbd5e1; color:#0f172a;}
+      .sidebar-menu a.active {background:#e6fffb; border-color:#5eead4; color:#115e59;
+                              font-weight:700;}
       div[data-testid="stMetric"] {background:#f8fafc; border:1px solid #e2e8f0;
                                    padding:.75rem; border-radius:.55rem;}
     </style>
@@ -97,6 +136,38 @@ def demo_banner() -> None:
         """,
         unsafe_allow_html=True,
     )
+
+
+def selected_page_from_url() -> str:
+    """Obtém uma página permitida da URL, usando a visão geral como padrão."""
+
+    raw_page = st.query_params.get("pagina", DEFAULT_PAGE)
+    if isinstance(raw_page, list):
+        raw_page = raw_page[0] if raw_page else DEFAULT_PAGE
+    page = str(raw_page).strip()
+    return page if page in NAVIGATION_ITEMS else DEFAULT_PAGE
+
+
+def render_navigation_menu() -> str:
+    """Apresenta a navegação lateral como links e retorna a página selecionada."""
+
+    selected_page = selected_page_from_url()
+    links = []
+    for page_id, label in NAVIGATION_ITEMS.items():
+        active = page_id == selected_page
+        css_class = "active" if active else ""
+        current = ' aria-current="page"' if active else ""
+        links.append(
+            f'<a class="{css_class}" href="?pagina={quote(page_id)}" '
+            f'target="_self"{current}>{html.escape(label)}</a>'
+        )
+    st.markdown(
+        '<nav class="sidebar-menu" aria-label="Navegação">'
+        + "".join(links)
+        + "</nav>",
+        unsafe_allow_html=True,
+    )
+    return selected_page
 
 
 def render_overview(data: dict) -> None:
@@ -316,7 +387,13 @@ def render_modeling(data: dict) -> None:
 
     summary = data["modeling_summary"]
     selected = summary.loc[(summary["dataset"] == dataset) & (summary["model"] == model)].iloc[0]
-    metrics_path = RUN_ROOT / "10_modeling" / dataset / model / "final_test_metrics.csv"
+    metrics_path = (
+        RUN_ROOT
+        / "10_modeling"
+        / dataset
+        / model
+        / DEMO_FILE_NAMES["modeling"]["metrics"]
+    )
     metrics = pd.read_csv(metrics_path).iloc[0]
 
     cols = st.columns(5)
@@ -333,7 +410,13 @@ def render_modeling(data: dict) -> None:
         st.dataframe(matrix, width="stretch")
     with right:
         st.subheader("Desempenho por classe")
-        per_class_path = RUN_ROOT / "10_modeling" / dataset / model / "final_test_per_class.csv"
+        per_class_path = (
+            RUN_ROOT
+            / "10_modeling"
+            / dataset
+            / model
+            / DEMO_FILE_NAMES["modeling"]["per_class"]
+        )
         per_class = pd.read_csv(per_class_path)
         per_class["Prioridade"] = per_class["class_code"].map(dict(enumerate(PRIORITY_LABELS)))
         per_class = per_class.rename(
@@ -347,7 +430,13 @@ def render_modeling(data: dict) -> None:
             width="stretch",
         )
 
-    calibration_path = RUN_ROOT / "10_modeling" / dataset / model / "final_test_calibration_curves.csv"
+    calibration_path = (
+        RUN_ROOT
+        / "10_modeling"
+        / dataset
+        / model
+        / DEMO_FILE_NAMES["modeling"]["calibration"]
+    )
     if calibration_path.exists():
         st.subheader("Curva de calibração")
         priority = st.selectbox("Classe da curva", PRIORITY_LABELS, index=3)
@@ -380,14 +469,18 @@ def render_explanations(data: dict) -> None:
 
     explanation_root = RUN_ROOT / "11_explanations" / dataset / model
     if model == "ordinal_logit":
-        frame = pd.read_csv(explanation_root / "ordinal_coefficients.csv")
+        frame = pd.read_csv(
+            explanation_root / DEMO_FILE_NAMES["explanations"]["ordinal_coefficients"]
+        )
         frame["Variável"] = frame["feature"].map(clean_feature_name)
         frame["Importância"] = frame["abs_coefficient"]
         frame["Coeficiente"] = frame["coefficient"]
         method = "magnitude dos coeficientes do modelo ordinal"
         table_columns = ["Variável", "Importância", "Coeficiente"]
     else:
-        frame = pd.read_csv(explanation_root / "global_shap_importance_highurgent.csv")
+        frame = pd.read_csv(
+            explanation_root / DEMO_FILE_NAMES["explanations"]["shap_importance"]
+        )
         frame["Variável"] = frame["feature"].map(clean_feature_name)
         frame["Importância"] = frame["mean_abs_shap_highurgent"]
         method = "média do valor SHAP absoluto para o agrupamento alta/urgente"
@@ -431,21 +524,21 @@ def render_traceability(data: dict) -> None:
     cols[0].download_button(
         "Baixar relatório (.md)",
         data["report"].encode("utf-8"),
-        file_name="relatorio_execucao_demo.md",
+        file_name=DEMO_FILE_NAMES["downloads"]["report"],
         mime="text/markdown",
         width="stretch",
     )
     cols[1].download_button(
         "Baixar configuração (.yaml)",
         data["config"].encode("utf-8"),
-        file_name="configuracao_resolvida_demo.yaml",
+        file_name=DEMO_FILE_NAMES["downloads"]["configuration"],
         mime="text/yaml",
         width="stretch",
     )
     cols[2].download_button(
         "Baixar artefatos (.zip)",
         cached_archive(str(RUN_ROOT)),
-        file_name="artefatos_demonstracao_precarregada.zip",
+        file_name=DEMO_FILE_NAMES["downloads"]["artifacts"],
         mime="application/zip",
         width="stretch",
     )
@@ -485,17 +578,7 @@ except Exception as exc:  # pragma: no cover - proteção da interface implantad
 
 with st.sidebar:
     st.header("Demonstração da dissertação")
-    page = st.radio(
-        "Navegação",
-        [
-            "Visão geral",
-            "Perfis sintéticos",
-            "Qualidade e extração",
-            "Modelagem",
-            "Interpretabilidade",
-            "Rastreabilidade",
-        ],
-    )
+    page = render_navigation_menu()
     st.divider()
     st.caption("Execução congelada: demonstracao_precarregada")
     st.caption("Sem upload, sem reexecução e sem acesso a dados reais.")
@@ -503,12 +586,12 @@ with st.sidebar:
 demo_banner()
 
 renderers = {
-    "Visão geral": render_overview,
-    "Perfis sintéticos": render_profiles,
-    "Qualidade e extração": render_quality,
-    "Modelagem": render_modeling,
-    "Interpretabilidade": render_explanations,
-    "Rastreabilidade": render_traceability,
+    "visao-geral": render_overview,
+    "perfis-sinteticos": render_profiles,
+    "qualidade-extracao": render_quality,
+    "modelagem": render_modeling,
+    "interpretabilidade": render_explanations,
+    "rastreabilidade": render_traceability,
 }
 renderers[page](bundle)
 

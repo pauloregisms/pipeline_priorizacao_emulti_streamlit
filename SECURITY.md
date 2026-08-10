@@ -11,7 +11,7 @@ Este repositório foi projetado para trabalhar exclusivamente com **dados sinté
 
 ## Credenciais de APIs futuras
 
-O projeto inclui o adaptador opcional `GeminiNarrativeGenerator`, mas o modo padrão continua sendo local (`template`). Ao usar Gemini ou outro adaptador externo:
+O projeto inclui a camada opcional `LLMNarrativeGenerator`, mas o modo padrão continua sendo local (`template`). Ao usar qualquer backend externo:
 
 - armazene credenciais apenas em variáveis de ambiente, cofre de segredos ou configuração local ignorada pelo Git;
 - nunca grave credenciais em YAML, notebooks compartilhados, artefatos ou logs;

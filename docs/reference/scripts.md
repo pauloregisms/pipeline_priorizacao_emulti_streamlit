@@ -17,7 +17,7 @@ Todos os scripts aceitam, no mínimo:
 | `01_generate_profiles.py` | gera `dados_estruturados`, `vulnerabilidade_social`, `gravidade_latente_auditoria` e `marcadores_origem` | YAML | `profiles.csv` |
 | `02_simulate_psychometrics.py` | gera itens e totais de `indicadores_psicometricos` | perfis + YAML | `psychometrics.csv` |
 | `03_quality_control_base.py` | valida faixas e consistência | perfis + escalas | tabelas e `quality_summary.json` |
-| `04_generate_narratives.py` | gera `narrativa_clinica` sem `prioridade_referencia`, por provedor `template` ou `gemini` | `dados_estruturados`, `indicadores_psicometricos`, `marcadores_origem` | `narratives.jsonl` e manifest do provedor |
+| `04_generate_narratives.py` | gera `narrativa_clinica` sem `prioridade_referencia`, por provedor `template` ou `llm` | `dados_estruturados`, `indicadores_psicometricos`, `marcadores_origem` | `narratives.jsonl` e manifest do provedor |
 | `05_assign_reference_priority.py` | gera `prioridade_referencia` | `dados_estruturados`, `indicadores_psicometricos`, `marcadores_origem` | `prioridade_referencia.csv` |
 | `06_extract_markers.py` | extrai `marcadores_extraidos` | narrativas | `marcadores_extraidos.csv` |
 | `07_create_annotation_sample.py` | cria amostra para dupla anotação | narrativas + estratos | template e auditoria |

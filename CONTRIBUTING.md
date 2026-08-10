@@ -73,7 +73,7 @@ Use o modelo presente em `docs/decisions/ADR-TEMPLATE.md`.
 
 ## Mudanças na geração de narrativas
 
-O adaptador Gemini já implementado deve obedecer ao [guia de uso](docs/how-to/usar-provedor-gemini.md). Toda nova integração de LLM deve obedecer à [política de integração](docs/how-to/adicionar-provedor-llm.md):
+A camada LLM unificada deve obedecer ao [guia de uso](docs/how-to/usar-provedor-llm.md). Toda nova integração de endpoint deve obedecer à [política de integração](docs/how-to/adicionar-provedor-llm.md):
 
 - implementar `BaseNarrativeGenerator`;
 - aceitar apenas `NarrativeRequest`;

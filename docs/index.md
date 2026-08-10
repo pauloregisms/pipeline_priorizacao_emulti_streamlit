@@ -13,7 +13,7 @@ A organização segue quatro tipos de necessidade:
 | Apresentar a execução sintética pré-carregada | [Demonstração Streamlit](tutorials/demonstracao-streamlit.md) |
 | Resolver uma tarefa específica | [Guias práticos](how-to/criar-cenario.md) |
 | Visualizar resultados de classificação | [Tabela ordenada da classificação](how-to/visualizar-classificacao-final.md) |
-| Gerar narrativas por API Gemini | [Usar o provedor Gemini](how-to/usar-provedor-gemini.md) |
+| Gerar narrativas ou extrair marcadores por LLM | [Usar um provedor LLM](how-to/usar-provedor-llm.md) |
 | Consultar contratos, parâmetros, scripts e artefatos | [Referência](reference/configuracao.md) |
 
 ## Conteúdo essencial para novos desenvolvedores
@@ -26,7 +26,7 @@ A organização segue quatro tipos de necessidade:
 6. [Arquitetura C4](architecture/c4-componentes.md) — componentes e fronteiras.
 7. [ADRs](decisions/README.md) — decisões que não devem ser alteradas sem revisão.
 8. [Tabela ordenada da classificação](how-to/visualizar-classificacao-final.md) — inspeção dos perfis sintéticos classificados.
-9. [Provedor Gemini](how-to/usar-provedor-gemini.md) — integração externa opcional, sem mudar os contratos do pipeline.
+9. [Camada LLM](how-to/usar-provedor-llm.md) — integração externa opcional, configurável por YAML e sem mudar os contratos do pipeline.
 
 ## Regras de leitura obrigatória
 

@@ -39,7 +39,7 @@ flowchart LR
 
 ### Geração narrativa
 
-`narratives.py` recebe `NarrativeRequest` e produz `NarrativeResponse`. Nenhuma outra etapa deve depender de API ou fornecedor específico. O projeto inclui `TemplateNarrativeGenerator` e o adaptador opcional `GeminiNarrativeGenerator`.
+`narratives.py` recebe `NarrativeRequest` e produz `NarrativeResponse`. Nenhuma outra etapa depende de API ou fornecedor específico. O projeto inclui `TemplateNarrativeGenerator` e o adaptador opcional `LLMNarrativeGenerator`.
 
 ### Prioridade
 

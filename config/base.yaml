@@ -85,7 +85,7 @@ priority_rules:
   source_note: "Substituir por matriz de prioridade validada por especialistas."
 
 narrative:
-  # "template" mantém a execução local. Use config/gemini.yaml para ativar a API.
+  # "template" mantém a execução local. Use config/llm.yaml para ativar uma API.
   provider: "template"
   generator_id: "template-simulator-v1"
   mode: "offline_smoke_test"
@@ -94,14 +94,18 @@ narrative:
   language: "pt-BR"
   # Não incluir prioridade/rótulo em prompts ou em objetos enviados ao gerador.
   forbidden_input_keys: ["prioridade_referencia", "prioridade_referencia_codigo", "prioridade_prevista", "prioridade_prevista_codigo", "priority", "prioridade", "priority_code", "priority_label", "label", "target", "Yref", "Yhat"]
-  # Mantido aqui para documentar a estrutura do provedor. config/gemini.yaml faz o override executável.
-  gemini:
-    generator_id: "gemini-api-gemini-3.5-flash"
-    model_id: "gemini-3.5-flash"
-    api_key_env: "GEMINI_API_KEY"
+  # O bloco é neutro: backend e modelo são definidos no cenário executável.
+  llm:
+    backend: "CONFIGURE_BACKEND"
+    model_id: "CONFIGURE_MODEL_ID"
+    generator_id: "llm-configured-generator"
+    api_key_env: "LLM_API_KEY"
+    response_format: "json_schema"
     temperature: 1.0
     max_output_tokens: 500
     retry_backoff_seconds: 2.0
+    send_seed: false
+    request_options: {}
 
 extraction:
   provider: "rules"
@@ -114,13 +118,17 @@ extraction:
     enabled: false
     n_records: 50
     repetitions: 3
-  gemini:
-    extractor_id: "gemini-api-gemini-3.5-flash-extractor-v1"
-    model_id: "gemini-3.5-flash"
-    api_key_env: "GEMINI_API_KEY"
+  llm:
+    backend: "CONFIGURE_BACKEND"
+    model_id: "CONFIGURE_MODEL_ID"
+    extractor_id: "llm-configured-extractor"
+    api_key_env: "LLM_API_KEY"
+    response_format: "json_schema"
     temperature: 0.0
     max_output_tokens: 2200
     retry_backoff_seconds: 2.0
+    send_seed: false
+    request_options: {}
   markers:
     - ideacao_suicida
     - planejamento_suicida

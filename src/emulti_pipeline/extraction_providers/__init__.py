@@ -1,5 +1,5 @@
-"""Provedores opcionais de extração de marcadores a partir de narrativas."""
+"""Provedores opcionais de extração de marcadores por LLM."""
 
-from .gemini import GeminiClinicalExtractor
+from .llm import LLMClinicalExtractor
 
-__all__ = ["GeminiClinicalExtractor"]
+__all__ = ["LLMClinicalExtractor"]

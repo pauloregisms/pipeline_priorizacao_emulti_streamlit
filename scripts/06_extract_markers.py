@@ -61,7 +61,7 @@ def main() -> None:
 
     stability_cfg = extraction_config.get("stability", {})
     stability_files: list[str] = []
-    if provider == "gemini" and bool(stability_cfg.get("enabled", False)):
+    if provider == "llm" and bool(stability_cfg.get("enabled", False)):
         n_records = min(int(stability_cfg.get("n_records", 50)), len(allowed))
         repetitions = int(stability_cfg.get("repetitions", 3))
         sample = allowed.sample(n=n_records, random_state=seed).sort_values("patient_id")
@@ -79,6 +79,7 @@ def main() -> None:
             "provider": provider,
             "extractor_id": getattr(extractor, "extractor_id", extraction_config.get("extractor_id")),
             "ontology_version": getattr(extractor, "ontology_version", extraction_config.get("ontology_version")),
+            "backend": getattr(extractor, "backend", None),
             "model_id": getattr(extractor, "model_id", None),
             "n_narratives": int(len(extracted)),
             "failure_count": failure_count,

@@ -109,8 +109,8 @@ def _experiencer_label(sentence: str) -> str:
 class RuleBasedClinicalExtractor:
     """Linha de base auditável por dicionário, negação e qualificadores."""
 
-    ontology_version: str = "ontology_v2"
-    extractor_id: str = "rule-dictionary-qualified-v2"
+    ontology_version: str = "ontology_v1"
+    extractor_id: str = "rule-dictionary-qualified-v1"
     flip_rate: float = 0.0
     seed: int = 0
 
@@ -180,7 +180,7 @@ class RuleBasedClinicalExtractor:
 
 
 def create_clinical_extractor(extraction_config: Mapping[str, Any], *, seed: int = 0):
-    """Instancia o extrator configurado; Gemini é importado apenas quando solicitado."""
+    """Instancia extrator local ou por LLM conforme o YAML."""
     provider = str(extraction_config.get("provider", "rules")).strip().lower()
     if provider == "rules":
         return RuleBasedClinicalExtractor(
@@ -189,23 +189,30 @@ def create_clinical_extractor(extraction_config: Mapping[str, Any], *, seed: int
             flip_rate=float(extraction_config.get("flip_rate", 0.0)),
             seed=seed,
         )
-    if provider == "gemini":
-        from .extraction_providers.gemini import GeminiClinicalExtractor
+    if provider == "llm":
+        from .extraction_providers.llm import LLMClinicalExtractor
 
-        gemini = extraction_config.get("gemini", {})
-        return GeminiClinicalExtractor(
-            model_id=str(gemini.get("model_id", "gemini-3.5-flash")),
-            extractor_id=str(gemini.get("extractor_id", "gemini-extractor-v1")),
+        llm_config = extraction_config.get("llm", {})
+        if not isinstance(llm_config, Mapping):
+            raise ValueError("O bloco extraction.llm deve ser um dicionário YAML.")
+        temperature = llm_config.get("temperature", 0.0)
+        return LLMClinicalExtractor(
+            llm_configuration=llm_config,
+            extractor_id=str(
+                llm_config.get(
+                    "extractor_id",
+                    extraction_config.get("extractor_id", "llm-extractor-v1"),
+                )
+            ),
             ontology_version=str(extraction_config.get("ontology_version", "ontology_v2")),
             prompt_version=str(extraction_config.get("prompt_version", "extracao_marcadores_v1")),
-            api_key_env=str(gemini.get("api_key_env", "GEMINI_API_KEY")),
-            temperature=float(gemini.get("temperature", 0.0)),
-            max_output_tokens=int(gemini.get("max_output_tokens", 2200)),
+            temperature=None if temperature is None else float(temperature),
+            max_output_tokens=int(llm_config.get("max_output_tokens", 2200)),
             max_retries=int(extraction_config.get("max_retries", 2)),
-            retry_backoff_seconds=float(gemini.get("retry_backoff_seconds", 2.0)),
+            retry_backoff_seconds=float(llm_config.get("retry_backoff_seconds", 2.0)),
             base_seed=seed,
         )
-    raise ValueError(f"Provedor de extração desconhecido: {provider!r}. Use 'rules' ou 'gemini'.")
+    raise ValueError(f"Provedor de extração desconhecido: {provider!r}. Use 'rules' ou 'llm'.")
 
 
 def extraction_reference_table(profiles: pd.DataFrame) -> pd.DataFrame:

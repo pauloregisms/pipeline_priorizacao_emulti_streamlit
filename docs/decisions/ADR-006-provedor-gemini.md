@@ -1,5 +1,7 @@
 # ADR-006 — Adotar adaptador opcional para Gemini API
 
+> **Situação atual:** substituído pelo [ADR-007](ADR-007-camada-llm-unificada.md). Este documento é mantido apenas como histórico da primeira integração externa.
+
 - **Status:** Aceita
 - **Data:** 2026-06-25
 - **Decisores:** equipe do projeto

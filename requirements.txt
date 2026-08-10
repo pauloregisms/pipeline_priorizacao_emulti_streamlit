@@ -12,8 +12,9 @@ matplotlib>=3.8
 PyYAML>=6.0
 joblib>=1.3
 
-# SDK oficial opcional para o provedor Gemini. O simulador local não usa a API.
-google-genai>=1.0,<2.0
+# Interface unificada opcional para Google AI, OpenAI, Anthropic e outros LLMs.
+# O simulador local não realiza chamadas de API.
+litellm>=1.0,<2.0
 
 tabulate>=0.9  # necessário para pandas.DataFrame.to_markdown() no relatório automático
 

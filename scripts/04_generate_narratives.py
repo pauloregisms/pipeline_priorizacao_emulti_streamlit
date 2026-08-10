@@ -87,12 +87,14 @@ def main() -> None:
         "forbidden_input_keys": sorted(getattr(generator, "forbidden_input_keys", config["narrative"]["forbidden_input_keys"])),
         "seed_base": effective_seed(config),
     }
-    if provider.lower() == "gemini":
-        gemini_config = config["narrative"].get("gemini", {})
-        manifest["model_id"] = gemini_config.get("model_id")
-        manifest["api_key_env"] = gemini_config.get("api_key_env")
-        manifest["temperature"] = gemini_config.get("temperature")
-        manifest["max_output_tokens"] = gemini_config.get("max_output_tokens")
+    if provider.lower() == "llm":
+        llm_config = config["narrative"].get("llm", {})
+        manifest["backend"] = llm_config.get("backend")
+        manifest["model_id"] = llm_config.get("model_id")
+        manifest["api_key_env"] = llm_config.get("api_key_env")
+        manifest["temperature"] = llm_config.get("temperature")
+        manifest["max_output_tokens"] = llm_config.get("max_output_tokens")
+        manifest["response_format"] = llm_config.get("response_format")
     write_json(output / "narrative_generation_manifest.json", manifest)
     logger.info(
         "Foram geradas %d narrativas sintéticas com provedor %s em %s",

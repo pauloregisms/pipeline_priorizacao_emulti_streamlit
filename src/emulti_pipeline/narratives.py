@@ -3,7 +3,7 @@
 A geração textual permanece desacoplada do restante do pipeline. O projeto inclui:
 
 - ``TemplateNarrativeGenerator``: simulador local, determinístico por semente;
-- ``GeminiNarrativeGenerator``: adaptador opcional para a Gemini API;
+- ``LLMNarrativeGenerator``: adaptador unificado para backends de LLM;
 - ``create_narrative_generator``: fábrica configurável por YAML.
 
 Todos os provedores recebem somente ``NarrativeRequest`` e devem devolver
@@ -292,8 +292,8 @@ class TemplateNarrativeGenerator(BaseNarrativeGenerator):
 def create_narrative_generator(narrative_config: Mapping[str, Any]) -> BaseNarrativeGenerator:
     """Instancia o provedor textual configurado sem acoplar scripts ao fornecedor.
 
-    O valor padrão é ``template`` para preservar execução local sem credenciais. O
-    provedor ``gemini`` só é instanciado quando selecionado explicitamente no YAML.
+    O valor padrão é ``template`` para preservar a execução local. O provedor
+    ``llm`` lê backend, modelo e credencial exclusivamente do YAML e do ambiente.
     """
     provider = str(narrative_config.get("provider", "template")).strip().lower()
     forbidden_input_keys = narrative_config.get("forbidden_input_keys", ())
@@ -305,43 +305,30 @@ def create_narrative_generator(narrative_config: Mapping[str, Any]) -> BaseNarra
             omission_rate=float(narrative_config.get("omission_rate", 0.0)),
         )
 
-    if provider == "gemini":
-        # Importação tardia: quem usa somente o simulador local não precisa importar
-        # nem inicializar dependências da Gemini API.
-        from .narrative_providers.gemini import GeminiNarrativeGenerator
+    if provider == "llm":
+        from .narrative_providers.llm import LLMNarrativeGenerator
 
-        gemini_config = narrative_config.get("gemini", {})
-        if not isinstance(gemini_config, Mapping):
-            raise ValueError("O bloco narrative.gemini deve ser um dicionário YAML.")
-
-        return GeminiNarrativeGenerator(
-            model_id=str(gemini_config.get("model_id", "gemini-3.5-flash")),
+        llm_config = narrative_config.get("llm", {})
+        if not isinstance(llm_config, Mapping):
+            raise ValueError("O bloco narrative.llm deve ser um dicionário YAML.")
+        temperature = llm_config.get("temperature", 1.0)
+        return LLMNarrativeGenerator(
+            llm_configuration=llm_config,
             generator_id=str(
-                gemini_config.get(
+                llm_config.get(
                     "generator_id",
-                    f"gemini-api-{gemini_config.get('model_id', 'model')}",
+                    f"llm-{llm_config.get('backend', 'backend')}-{llm_config.get('model_id', 'model')}",
                 )
             ),
-            api_key_env=str(gemini_config.get("api_key_env", "GEMINI_API_KEY")),
-            temperature=float(gemini_config.get("temperature", 1.0)),
-            max_output_tokens=int(gemini_config.get("max_output_tokens", 500)),
+            temperature=None if temperature is None else float(temperature),
+            max_output_tokens=int(llm_config.get("max_output_tokens", 500)),
             max_retries=int(narrative_config.get("max_retries", 2)),
-            retry_backoff_seconds=float(gemini_config.get("retry_backoff_seconds", 2.0)),
+            retry_backoff_seconds=float(llm_config.get("retry_backoff_seconds", 2.0)),
             language=str(narrative_config.get("language", "pt-BR")),
             forbidden_input_keys=forbidden_input_keys,
         )
 
     raise ValueError(
         f"Provedor de narrativa desconhecido: {provider!r}. "
-        "Use 'template' ou 'gemini'."
+        "Use 'template' ou 'llm'."
     )
-
-
-class FutureApiNarrativeGenerator(BaseNarrativeGenerator):
-    """Esqueleto genérico para futuras integrações que não usem Gemini."""
-
-    def generate(self, request: NarrativeRequest) -> NarrativeResponse:  # pragma: no cover
-        raise NotImplementedError(
-            "Implemente um adaptador de API que herde de BaseNarrativeGenerator. "
-            "O adaptador deve respeitar NarrativeRequest/NarrativeResponse e nunca enviar prioridade_referencia."
-        )

@@ -1,0 +1,59 @@
+# Configuração genérica para geração e extração por modelo de linguagem.
+#
+# Troque backend, model_id e api_key_env sem modificar código Python.
+# Exemplos de backend aceitos pelo LiteLLM incluem: gemini, openai e anthropic.
+# A compatibilidade com JSON Schema depende do modelo escolhido. Quando o modelo
+# não oferecer saída estruturada, use response_format: "json_object" ou
+# "prompt_only" e mantenha as retentativas e a validação do pipeline.
+extends: "base.yaml"
+
+narrative:
+  provider: "llm"
+  prompt_version: "llm_soap_v1"
+  max_retries: 2
+  llm:
+    backend: "CONFIGURE_BACKEND"
+    model_id: "CONFIGURE_MODEL_ID"
+    generator_id: "llm-narrative-primary"
+    api_key_env: "LLM_API_KEY"
+    response_format: "json_schema"
+    temperature: 1.0
+    max_output_tokens: 500
+    retry_backoff_seconds: 2.0
+    send_seed: true
+    request_options: {}
+
+extraction:
+  provider: "llm"
+  extractor_id: "llm-extractor-primary"
+  ontology_version: "ontology_v2"
+  prompt_version: "extracao_marcadores_v1"
+  max_retries: 2
+  stability:
+    enabled: true
+    n_records: 50
+    repetitions: 3
+  llm:
+    backend: "CONFIGURE_BACKEND"
+    model_id: "CONFIGURE_MODEL_ID"
+    extractor_id: "llm-extractor-primary"
+    api_key_env: "LLM_API_KEY"
+    response_format: "json_schema"
+    temperature: 0.0
+    max_output_tokens: 2200
+    retry_backoff_seconds: 2.0
+    send_seed: true
+    request_options: {}
+
+execution:
+  action: "executar"
+  run_id: "experimento_llm"
+  stop_after: null
+  models: "all"
+  skip_explanations: false
+  skip_report: false
+  run_tests: true
+  validate_streamlit_artifacts: true
+  replace_existing_run: false
+  save_results: true
+  package_project: true

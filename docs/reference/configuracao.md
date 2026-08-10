@@ -98,48 +98,54 @@ Referência e regra-base chamam a mesma matriz; não existem limiares paralelos 
 
 | Chave | Uso |
 |---|---|
-| `provider` | seleciona `template` (local) ou `gemini` (API opcional) |
+| `provider` | seleciona `template` (local) ou `llm` (API opcional) |
 | `generator_id` | identificador do simulador template |
 | `prompt_version` | versão lógica do prompt ou contrato textual |
 | `max_retries` | tentativas adicionais após a primeira chamada de API |
 | `language` | idioma esperado |
 | `forbidden_input_keys` | lista adicional de chaves que não podem entrar em geração textual |
-| `gemini` | bloco de configuração do adaptador Gemini |
+| `llm` | bloco unificado com backend, modelo, credencial e opções de chamada |
 
-### `narrative.gemini`
+### `narrative.llm`
 
 | Chave | Uso |
 |---|---|
 | `generator_id` | identificador estável preservado nos metadados de execução |
-| `model_id` | identificador do modelo Gemini solicitado pelo SDK |
-| `api_key_env` | nome da variável de ambiente com a chave, por padrão `GEMINI_API_KEY` |
+| `backend` | prefixo do provedor reconhecido pelo LiteLLM, como `gemini`, `openai` ou `anthropic` |
+| `model_id` | identificador do modelo no backend escolhido |
+| `api_key_env` | nome da variável de ambiente que contém a credencial |
+| `api_base` | endpoint alternativo opcional para serviço compatível |
+| `response_format` | `json_schema`, `json_object` ou `prompt_only`, conforme suporte do modelo |
 | `temperature` | parâmetro de geração registrado por narrativa |
 | `max_output_tokens` | limite de saída JSON curta |
 | `retry_backoff_seconds` | espera inicial antes de retentativas exponenciais |
+| `send_seed` | envia a semente quando o backend aceitar esse parâmetro |
+| `request_options` | parâmetros adicionais aceitos pelo LiteLLM; credenciais e mensagens são proibidas aqui |
 
-O cenário `config/gemini.yaml` usa `extends: "base.yaml"` e ativa Gemini tanto na
-geração quanto na extração. O loader do projeto mescla dicionários de forma recursiva,
-permitindo criar novos cenários de API sem duplicar parâmetros científicos.
+O cenário `config/llm.yaml` usa `extends: "base.yaml"` e ativa a camada LLM tanto
+na geração quanto na extração. O loader do projeto mescla dicionários de forma
+recursiva, permitindo trocar backend e modelo sem duplicar parâmetros científicos.
 
 > **Segurança:** nenhuma chave de API pode ser gravada no YAML. Use somente
 > variável de ambiente ou cofre de segredos. O adaptador verifica chaves proibidas
 > em toda a estrutura da requisição antes de montar o prompt.
 
-> **Reprodutibilidade:** `seed` é enviado a cada chamada Gemini, mas o resultado
-> de LLM deve ser considerado reproduzível por melhor esforço. Preserve o YAML,
+> **Reprodutibilidade:** quando `send_seed` está ativo, a semente é enviada e pode
+> ser descartada por backends que não a suportam. O resultado de LLM deve ser
+> considerado reproduzível por melhor esforço. Preserve o YAML,
 > `model_id`, `prompt_hash`, parâmetros e narrativas efetivamente obtidas.
 
 ## `extraction`
 
 | Chave | Uso |
 |---|---|
-| `provider` | `rules` no teste local ou `gemini` no experimento principal |
+| `provider` | `rules` no teste local ou `llm` no experimento principal |
 | `extractor_id` | identificador do extrator |
 | `ontology_version` | versão da ontologia de marcadores |
 | `prompt_version`, `max_retries` | versão e política de retentativas |
 | `bootstrap_repetitions` | reamostragens da validação da extração |
 | `stability` | número de casos e repetições da análise de estabilidade |
-| `gemini` | modelo, chave por variável de ambiente, temperatura e limite de saída |
+| `llm` | backend, modelo, chave por variável de ambiente, formato e parâmetros de saída |
 | `markers` | lista de marcadores que o cenário pretende usar |
 
 O extrator atual possui uma ontologia codificada no módulo `extraction.py`. Ao acrescentar marcador ao YAML, confirme também suporte no módulo, em contratos, em anotação e em documentação.

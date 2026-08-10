@@ -33,8 +33,8 @@ nav:
   - Guias práticos:
       - Criar cenário: how-to/criar-cenario.md
       - Alterar matriz de prioridade: how-to/alterar-matriz-prioridade.md
-      - Usar o provedor Gemini: how-to/usar-provedor-gemini.md
-      - Adicionar outro provedor de LLM: how-to/adicionar-provedor-llm.md
+      - Usar um provedor LLM: how-to/usar-provedor-llm.md
+      - Configurar outro provedor de LLM: how-to/adicionar-provedor-llm.md
       - Anotação humana: how-to/anotacao-humana.md
       - Análise de sensibilidade: how-to/analise-sensibilidade.md
       - Visualizar classificação final: how-to/visualizar-classificacao-final.md
@@ -47,7 +47,7 @@ nav:
       - Ontologia de marcadores: reference/ontologia-de-marcadores.md
       - Scripts e CLI: reference/scripts.md
       - Artefatos: reference/artefatos.md
-      - Provedor Gemini: reference/provedor-gemini.md
+      - Camada LLM: reference/provedor-llm.md
   - Arquitetura:
       - arc42 resumido: architecture/arc42.md
       - C4 — Contexto: architecture/c4-contexto.md
@@ -61,5 +61,6 @@ nav:
       - ADR-004: decisions/ADR-004-validacao-aninhada.md
       - ADR-005: decisions/ADR-005-separacao-marcadores-origem-extraidos.md
       - ADR-006: decisions/ADR-006-provedor-gemini.md
+      - ADR-007: decisions/ADR-007-camada-llm-unificada.md
       - Modelo de ADR: decisions/ADR-TEMPLATE.md
   - Governança da documentação: governanca-documentacao.md

@@ -9,7 +9,7 @@ from types import SimpleNamespace
 import pandas as pd
 
 from emulti_pipeline.config import load_config
-from emulti_pipeline.extraction_providers.gemini import GeminiClinicalExtractor
+from emulti_pipeline.extraction_providers.llm import LLMClinicalExtractor
 from emulti_pipeline.features import build_analytical_sets
 from emulti_pipeline.markers import MARKER_NAMES, flatten_markers
 from emulti_pipeline.priority import apply_priority_matrix
@@ -19,18 +19,29 @@ def _empty_markers() -> dict:
     return {marker: {} for marker in MARKER_NAMES}
 
 
-class _FakeModels:
+class _FakeCompletion:
     def __init__(self, payload: dict) -> None:
         self.payload = payload
         self.calls = []
 
-    def generate_content(self, **kwargs):
+    def __call__(self, **kwargs):
         self.calls.append(kwargs)
-        return SimpleNamespace(text=json.dumps(self.payload, ensure_ascii=False))
+        return SimpleNamespace(
+            model="backend-model-version",
+            choices=[
+                SimpleNamespace(
+                    finish_reason="stop",
+                    message=SimpleNamespace(
+                        content=json.dumps(self.payload, ensure_ascii=False)
+                    ),
+                )
+            ],
+            usage={},
+        )
 
 
 class MethodologicalContractTests(unittest.TestCase):
-    def test_gemini_extractor_receives_only_narrative(self) -> None:
+    def test_llm_extractor_receives_only_narrative(self) -> None:
         markers = _empty_markers()
         markers["ideacao_suicida"] = {
             "present": 0,
@@ -56,19 +67,25 @@ class MethodologicalContractTests(unittest.TestCase):
                 "experiencer": value.get("experiencer", "paciente"),
                 "evidence": value.get("evidence", ""),
             }
-        fake = SimpleNamespace(models=_FakeModels({"markers": normalized}))
-        extractor = GeminiClinicalExtractor(
-            model_id="gemini-test",
+        completion = _FakeCompletion({"markers": normalized})
+        extractor = LLMClinicalExtractor(
+            llm_configuration={
+                "backend": "anthropic",
+                "model_id": "modelo-teste",
+                "response_format": "json_schema",
+            },
             extractor_id="test",
             ontology_version="v2",
             prompt_version="p1",
-            client=fake,
+            completion_callable=completion,
             max_retries=0,
         )
         result = extractor.extract(pd.DataFrame({"patient_id": ["SYN-1"], "narrativa_clinica": ["Nega ideação atual; houve ideação no passado."]}))
-        call = fake.models.calls[0]
-        self.assertIn("Narrativa (única fonte permitida)", call["contents"])
-        self.assertNotIn("prioridade", call["contents"].lower())
+        call = completion.calls[0]
+        self.assertEqual(call["model"], "anthropic/modelo-teste")
+        user_prompt = call["messages"][1]["content"]
+        self.assertIn("Narrativa (única fonte permitida)", user_prompt)
+        self.assertNotIn("prioridade", user_prompt.lower())
         self.assertEqual(result.loc[0, "marcadores_extraidos_ideacao_suicida_remote_present"], 1)
 
     def test_origin_and_extracted_sets_have_identical_feature_schema(self) -> None:

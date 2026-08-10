@@ -9,7 +9,7 @@ flowchart TB
     CORE["Biblioteca Python\nsrc/emulti_pipeline"]
     ART["Artefatos por execução\nartifacts/<run_id>/"]
     DOCS["Documentação\nREADME, docs, ADRs"]
-    LLM["Adaptador de narrativa\nTemplate local / Gemini opcional / APIs futuras"]
+    LLM["Adaptador de narrativa\nTemplate local / backend LLM configurado"]
 
     YAML --> SCRIPTS
     SCRIPTS --> CORE
@@ -30,4 +30,4 @@ flowchart TB
 | `src/emulti_pipeline/` | manter lógica reutilizável e contratos |
 | `artifacts/` | armazenar saídas intermediárias e finais |
 | `docs/` | registrar uso, arquitetura, contratos e decisões |
-| adaptador de narrativa | converter `NarrativeRequest` em `NarrativeResponse` sem acessar `prioridade_referencia`; `template` local ou `gemini` opcional |
+| adaptador de narrativa | converter `NarrativeRequest` em `NarrativeResponse` sem acessar `prioridade_referencia`; `template` local ou `llm` configurado por YAML |

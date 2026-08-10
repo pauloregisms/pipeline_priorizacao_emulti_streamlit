@@ -1,5 +1,12 @@
 # Changelog
 
+## Não publicado
+
+- Substituição dos adaptadores vinculados ao Gemini por `LLMNarrativeGenerator`, `LLMClinicalExtractor` e `StructuredLLMClient`.
+- Seleção de Google AI, OpenAI, Anthropic ou outro backend compatível por `backend`, `model_id` e `api_key_env` no YAML.
+- Novas configurações `config/llm.yaml` e `config/llm_smoke.yaml`; remoção dos modos e arquivos executáveis associados a um fornecedor.
+- Executor do Colab com modos `smoke` e `llm_smoke`, função `require_llm_api_keys()` e caminho YAML explícito em `execute_selected_mode()`.
+
 Este arquivo registra mudanças relevantes para quem executa, estende, revisa ou reproduz o pipeline.
 
 O formato segue a convenção **Keep a Changelog** de forma simplificada. Versões futuras devem separar mudanças em `Adicionado`, `Alterado`, `Corrigido`, `Removido` e `Segurança` quando aplicável.

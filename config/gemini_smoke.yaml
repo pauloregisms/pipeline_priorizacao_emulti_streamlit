@@ -1,5 +1,0 @@
-# Teste curto dos provedores Gemini de geração e extração. Executar até a etapa 08.
-extends: "gemini.yaml"
-
-simulation:
-  n_records: 20

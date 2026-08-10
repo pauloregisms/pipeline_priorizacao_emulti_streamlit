@@ -12,12 +12,32 @@ simulation:
   n_records: 800
   base_seed: 20260806
   replicate_index: 0
+  missingness_rate: 0.00
+  narrative_omission_rate: 0.00
+  extraction_flip_rate: 0.00
+
+narrative:
+  provider: "template"
+  generator_id: "template-simulator-v1"
+  mode: "local_seeded_generator"
+  prompt_version: "narrativa_soap_v1"
+  max_retries: 0
+  language: "pt-BR"
 
 annotation:
   n_per_priority: 15
 
 extraction:
+  provider: "rules"
+  extractor_id: "rule-dictionary-qualified-v2"
+  ontology_version: "ontology_v2"
+  prompt_version: "extracao_marcadores_v1"
+  max_retries: 0
   bootstrap_repetitions: 50
+  stability:
+    enabled: false
+    n_records: 50
+    repetitions: 3
 
 modeling:
   outer_splits: 3
@@ -28,3 +48,16 @@ modeling:
 
 sensitivity:
   enabled: false
+
+execution:
+  action: "executar"
+  run_id: "demonstracao_precarregada"
+  stop_after: null
+  models: "all"
+  skip_explanations: false
+  skip_report: false
+  run_tests: true
+  validate_streamlit_artifacts: true
+  replace_existing_run: true
+  save_results: true
+  package_project: true

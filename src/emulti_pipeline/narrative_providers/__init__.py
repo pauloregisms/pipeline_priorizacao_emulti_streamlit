@@ -1,5 +1,5 @@
-"""Adaptadores opcionais para provedores externos de geração de narrativas."""
+"""Adaptadores opcionais para geração de narrativas por LLM."""
 
-from .gemini import GeminiNarrativeGenerator
+from .llm import LLMNarrativeGenerator
 
-__all__ = ["GeminiNarrativeGenerator"]
+__all__ = ["LLMNarrativeGenerator"]
