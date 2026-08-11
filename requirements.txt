@@ -6,7 +6,7 @@ scipy>=1.11
 scikit-learn>=1.4
 xgboost>=2.0
 shap>=0.45
-numba>=0.61,<1.0
+numba==0.65.1
 llvmlite>=0.44,<1.0
 matplotlib>=3.8
 PyYAML>=6.0
