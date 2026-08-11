@@ -10,7 +10,11 @@ import pandas as pd
 from _bootstrap import common_parser
 from emulti_pipeline.config import load_config
 from emulti_pipeline.markers import markers_from_row
-from emulti_pipeline.narratives import NarrativeRequest, create_narrative_generator
+from emulti_pipeline.narratives import (
+    NarrativeRequest,
+    build_qualitative_psychological_context,
+    create_narrative_generator,
+)
 from emulti_pipeline.utils import effective_seed, setup_logging, stage_dir, write_json
 
 
@@ -27,17 +31,17 @@ def _record_to_request(profile: pd.Series, scales: pd.Series, prompt_version: st
         "recent_service_contact",
     ]
     dados_estruturados = {column: profile[column] for column in structured_columns}
-    indicadores_psicometricos = {
-        "phq9_total": int(scales["phq9_total"]),
-        "gad7_total": int(scales["gad7_total"]),
-        "idate_estado_total": int(scales["idate_estado_total"]),
-    }
+    # As respostas e os totais dos instrumentos permanecem no artefato da etapa 02,
+    # na prioridade simulada e nos conjuntos analíticos. Antes da geração textual,
+    # são traduzidos localmente em manifestações qualitativas sem nomes, itens ou
+    # pontuações de instrumentos.
+    manifestacoes_psicologicas = build_qualitative_psychological_context(scales)
     marcadores_origem = markers_from_row(profile, "marcadores_origem_")
     return NarrativeRequest(
         patient_id=str(profile["patient_id"]),
         seed=int(profile["seed"]) + 2000,
         dados_estruturados=dados_estruturados,
-        indicadores_psicometricos=indicadores_psicometricos,
+        manifestacoes_psicologicas=manifestacoes_psicologicas,
         marcadores_origem=marcadores_origem,
         prompt_version=prompt_version,
     )
@@ -64,9 +68,15 @@ def main() -> None:
     output_file = output / "narratives.jsonl"
     rows = []
     with output_file.open("w", encoding="utf-8") as handle:
-        for _, record in merged.iterrows():
+        total_narratives = len(merged)
+        for progress_index, (_, record) in enumerate(merged.iterrows(), start=1):
             request = _record_to_request(record, record, config["narrative"]["prompt_version"])
-            response = generator.generate(request)
+            response = generator.generate(
+                request,
+                progress_index=progress_index,
+                progress_total=total_narratives,
+                progress_phase="narrative_generation",
+            )
             row = response.to_dict()
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
             rows.append(row)
@@ -85,6 +95,8 @@ def main() -> None:
         "narratives": len(rows),
         "api_called": api_called,
         "forbidden_input_keys": sorted(getattr(generator, "forbidden_input_keys", config["narrative"]["forbidden_input_keys"])),
+        "psychometric_narrative_contract": "qualitative_manifestations_only_v1",
+        "psychometric_scores_sent_to_generator": False,
         "seed_base": effective_seed(config),
     }
     if provider.lower() == "llm":

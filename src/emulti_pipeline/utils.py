@@ -49,6 +49,10 @@ def setup_logging(stage_name: str) -> logging.Logger:
         level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     )
+    # Evita duplicação das mensagens informativas emitidas internamente pelo
+    # LiteLLM. Avisos do provedor continuam visíveis, assim como os logs de
+    # progresso padronizados pelo próprio pipeline.
+    logging.getLogger("LiteLLM").setLevel(logging.WARNING)
     return logging.getLogger(stage_name)
 
 

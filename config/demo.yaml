@@ -18,9 +18,9 @@ simulation:
 
 narrative:
   provider: "template"
-  generator_id: "template-simulator-v1"
+  generator_id: "template-simulator-v2-qualitative"
   mode: "local_seeded_generator"
-  prompt_version: "narrativa_soap_v1"
+  prompt_version: "narrativa_soap_v2_qualitative"
   max_retries: 0
   language: "pt-BR"
 

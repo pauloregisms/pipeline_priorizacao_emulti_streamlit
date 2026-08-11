@@ -8,6 +8,7 @@ Este documento define formatos e fronteiras de dados que novos componentes devem
 |---|---|
 | `dados_estruturados` | atributos estruturados observáveis antes do encaminhamento conceitual |
 | `indicadores_psicometricos` | escalas psicométricas simuladas |
+| `manifestacoes_psicologicas` | tradução qualitativa local das experiências representadas pelas respostas simuladas, sem itens ou escores |
 | `marcadores_origem` | marcadores de origem definidos pelo gerador |
 | `narrativa_clinica` | narrativa SOAP sintética produzida pelo gerador |
 | `marcadores_extraidos` | marcadores recuperados de `narrativa_clinica` |
@@ -24,7 +25,7 @@ class NarrativeRequest:
     patient_id: str
     seed: int
     dados_estruturados: dict[str, Any]
-    indicadores_psicometricos: dict[str, Any]
+    manifestacoes_psicologicas: dict[str, Any]
     marcadores_origem: dict[str, Any]
     prompt_version: str
 ```
@@ -33,7 +34,8 @@ class NarrativeRequest:
 
 - `patient_id` deve ser sintético.
 - `seed` deve permitir reprodução da geração textual simulada.
-- `dados_estruturados`, `indicadores_psicometricos` e `marcadores_origem` podem conter apenas informação permitida no cenário.
+- `dados_estruturados`, `manifestacoes_psicologicas` e `marcadores_origem` podem conter apenas informação permitida no cenário.
+- `manifestacoes_psicologicas` contém somente descrições qualitativas. Nomes de instrumentos, números de itens, respostas ordinais, totais, faixas e escores são proibidos.
 - Não pode conter `prioridade_referencia`, `priority`, `prioridade`, `priority_code` ou equivalente.
 - A implementação do gerador deve falhar explicitamente se detectar chave proibida.
 
@@ -61,6 +63,7 @@ class NarrativeResponse:
 - Um provedor de API deve registrar modelo, versão quando disponível, parâmetros, timestamp, hash do prompt e política de retentativa.
 - `generation_metadata` não pode conter chave de API, cabeçalhos HTTP, prompt bruto ou outros segredos.
 - O adaptador LLM solicita JSON estruturado com `subjective` e `assessment`, depois constrói `narrativa_clinica`.
+- A resposta é rejeitada e submetida à política de retentativa se mencionar instrumento psicométrico, escore ou pontuação.
 
 ## Perfil sintético (`profiles.csv`)
 
@@ -82,6 +85,7 @@ Campos centrais:
 - Itens pontuados de IDATE-Estado variam de 1 a 4.
 - Totais esperados: `phq9_total` de 0 a 27; `gad7_total` de 0 a 21; `idate_estado_total` de 20 a 80.
 - Os totais devem ser derivados dos itens, não gerados independentemente.
+- Itens e totais permanecem disponíveis para auditoria, prioridade simulada e conjuntos analíticos, mas não entram no contrato de geração textual.
 
 ## Prioridade (`prioridade_referencia.csv`)
 

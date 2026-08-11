@@ -4,7 +4,7 @@
     "model__min_child_weight": 1,
     "model__subsample": 0.85
   },
-  "best_inner_score": 0.8498339105431325,
+  "best_inner_score": 0.8494122973278817,
   "model_name": "xgboost",
   "converged": null,
   "optimization_message": null,

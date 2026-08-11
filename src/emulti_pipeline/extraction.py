@@ -109,8 +109,8 @@ def _experiencer_label(sentence: str) -> str:
 class RuleBasedClinicalExtractor:
     """Linha de base auditável por dicionário, negação e qualificadores."""
 
-    ontology_version: str = "ontology_v1"
-    extractor_id: str = "rule-dictionary-qualified-v1"
+    ontology_version: str = "ontology_v2"
+    extractor_id: str = "rule-dictionary-qualified-v2"
     flip_rate: float = 0.0
     seed: int = 0
 
@@ -207,7 +207,7 @@ def create_clinical_extractor(extraction_config: Mapping[str, Any], *, seed: int
             ontology_version=str(extraction_config.get("ontology_version", "ontology_v2")),
             prompt_version=str(extraction_config.get("prompt_version", "extracao_marcadores_v1")),
             temperature=None if temperature is None else float(temperature),
-            max_output_tokens=int(llm_config.get("max_output_tokens", 2200)),
+            max_output_tokens=int(llm_config.get("max_output_tokens", 8192)),
             max_retries=int(extraction_config.get("max_retries", 2)),
             retry_backoff_seconds=float(llm_config.get("retry_backoff_seconds", 2.0)),
             base_seed=seed,

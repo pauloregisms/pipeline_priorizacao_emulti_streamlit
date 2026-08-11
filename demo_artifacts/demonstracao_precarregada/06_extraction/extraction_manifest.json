@@ -2,6 +2,7 @@
   "provider": "rules",
   "extractor_id": "rule-dictionary-qualified-v2",
   "ontology_version": "ontology_v2",
+  "backend": null,
   "model_id": null,
   "n_narratives": 800,
   "failure_count": 0,

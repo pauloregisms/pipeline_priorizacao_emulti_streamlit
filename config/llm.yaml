@@ -9,7 +9,7 @@ extends: "base.yaml"
 
 narrative:
   provider: "llm"
-  prompt_version: "llm_soap_v1"
+  prompt_version: "llm_soap_v2_qualitative"
   max_retries: 2
   llm:
     backend: "CONFIGURE_BACKEND"
@@ -18,7 +18,7 @@ narrative:
     api_key_env: "LLM_API_KEY"
     response_format: "json_schema"
     temperature: 1.0
-    max_output_tokens: 500
+    max_output_tokens: 2048
     retry_backoff_seconds: 2.0
     send_seed: true
     request_options: {}
@@ -40,7 +40,7 @@ extraction:
     api_key_env: "LLM_API_KEY"
     response_format: "json_schema"
     temperature: 0.0
-    max_output_tokens: 2200
+    max_output_tokens: 8192
     retry_backoff_seconds: 2.0
     send_seed: true
     request_options: {}

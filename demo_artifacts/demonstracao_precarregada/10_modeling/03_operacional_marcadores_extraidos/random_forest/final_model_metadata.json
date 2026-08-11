@@ -4,7 +4,7 @@
     "model__max_features": "sqrt",
     "model__min_samples_leaf": 1
   },
-  "best_inner_score": 0.8675548462249627,
+  "best_inner_score": 0.8681139125663001,
   "model_name": "random_forest",
   "converged": null,
   "optimization_message": null,

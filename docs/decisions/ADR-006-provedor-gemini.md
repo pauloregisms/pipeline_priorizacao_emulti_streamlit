@@ -24,8 +24,8 @@ O adaptador:
 
 - recebe somente `NarrativeRequest`;
 - bloqueia recursivamente chaves de prioridade e rótulo;
-- envia somente `dados_estruturados`, `indicadores_psicometricos` e
-  `marcadores_origem` ao conteúdo do prompt;
+- enviava, nesta primeira integração, `dados_estruturados`,
+  `indicadores_psicometricos` e `marcadores_origem` ao conteúdo do prompt;
 - solicita JSON estruturado com `subjective` e `assessment`;
 - registra metadados sem credenciais;
 - usa semente, hash do prompt, retentativas e artefatos de saída para
@@ -54,3 +54,8 @@ O adaptador:
 Revisar esta decisão quando houver mudança incompatível no SDK/API, necessidade
 de processamento em lote, adoção de outro provedor ou resultado de auditoria que
 mostre inconsistências relevantes nas narrativas geradas.
+
+> **Correção posterior:** o contrato atual não envia mais indicadores psicométricos
+> brutos ao gerador. A etapa 04 converte localmente as respostas simuladas em
+> `manifestacoes_psicologicas` qualitativas e bloqueia nomes de instrumentos,
+> números de itens, escores e pontuações na narrativa.

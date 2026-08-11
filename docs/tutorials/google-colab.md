@@ -2,12 +2,55 @@
 
 O Google Colab é útil para testes e demonstrações, mas seu ambiente é temporário. Guarde o arquivo ZIP do projeto e copie os resultados para o Google Drive ao término da execução.
 
+## Executor integrado recomendado
+
+O projeto inclui `pipeline_priorizacao_emulti_colab.py`, um executor orientado
+por YAML. A célula abaixo recupera somente esse roteiro do próprio ZIP. Em seguida,
+o executor descompacta o projeto, instala as dependências, carrega os segredos
+declarados na configuração e inicia a execução.
+
+```python
+from pathlib import Path
+from zipfile import ZipFile
+from google.colab import drive
+
+drive.mount("/content/drive")
+
+zip_path = Path(
+    "/content/drive/MyDrive/Projetos/eMulti/"
+    "pipeline_priorizacao_emulti-streamlit-demo.zip"
+)
+runner_path = Path("/content/pipeline_priorizacao_emulti_colab.py")
+with ZipFile(zip_path) as archive:
+    member = next(
+        name for name in archive.namelist()
+        if name.endswith("/pipeline_priorizacao_emulti_colab.py")
+    )
+    runner_path.write_bytes(archive.read(member))
+```
+
+Para o cenário local da demonstração:
+
+```python
+%run /content/pipeline_priorizacao_emulti_colab.py \
+    --config config/demo.yaml \
+    --zip-path /content/drive/MyDrive/Projetos/eMulti/pipeline_priorizacao_emulti-streamlit-demo.zip
+```
+
+Para o cenário configurado com Gemini 2.5 Flash-Lite, cadastre
+`GEMINI_API_KEY` nos Secrets do Colab e substitua o arquivo por
+`config/gemini.yaml`. O mesmo executor aceita outro fornecedor ou modelo por
+alteração do YAML ou pelos parâmetros de linha de comando.
+
+As etapas a seguir apresentam a alternativa manual e ajudam a compreender o
+que o executor realiza.
+
 ## 1. Enviar o projeto ao Google Drive
 
-Faça upload do arquivo `pipeline_priorizacao_emulti.zip` para uma pasta do Drive. Exemplo de caminho:
+Faça upload do arquivo `pipeline_priorizacao_emulti-streamlit-demo.zip` para uma pasta do Drive. Exemplo de caminho:
 
 ```text
-MyDrive/Projetos/eMulti/pipeline_priorizacao_emulti.zip
+MyDrive/Projetos/eMulti/pipeline_priorizacao_emulti-streamlit-demo.zip
 ```
 
 ## 2. Montar o Drive no notebook
@@ -27,14 +70,14 @@ from pathlib import Path
 import os
 import shutil
 
-zip_path = '/content/drive/MyDrive/Projetos/eMulti/pipeline_priorizacao_emulti.zip'
+zip_path = '/content/drive/MyDrive/Projetos/eMulti/pipeline_priorizacao_emulti-streamlit-demo.zip'
 workdir = '/content'
 
 if not Path(zip_path).exists():
     raise FileNotFoundError(f'Arquivo não encontrado: {zip_path}')
 
 shutil.unpack_archive(zip_path, workdir)
-project_dir = Path('/content/pipeline_priorizacao_emulti')
+project_dir = Path('/content/pipeline_priorizacao_emulti-main')
 os.chdir(project_dir)
 print(os.getcwd())
 ```
@@ -100,7 +143,7 @@ LLM](../how-to/usar-provedor-llm.md).
 from pathlib import Path
 import shutil
 
-source = Path('/content/pipeline_priorizacao_emulti/artifacts/colab_baseline')
+source = Path('/content/pipeline_priorizacao_emulti-main/artifacts/colab_baseline')
 destination = Path('/content/drive/MyDrive/Projetos/eMulti/resultados_colab_baseline')
 
 if destination.exists():

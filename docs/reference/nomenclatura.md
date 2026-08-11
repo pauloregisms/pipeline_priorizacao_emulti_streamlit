@@ -10,6 +10,7 @@ Esta referência define os nomes padronizados das estruturas centrais. Os nomes 
 | `vulnerabilidade_social` | índice sintético derivado de componentes dos dados estruturados | Sim |
 | `gravidade_latente_auditoria` | construto interno do gerador, preservado somente para auditoria | Não |
 | `indicadores_psicometricos` | respostas por item e totais simulados de PHQ-9, GAD-7 e IDATE-Estado | Sim; o cenário-base usa os totais |
+| `manifestacoes_psicologicas` | descrições qualitativas de sensações e atitudes, produzidas localmente a partir das respostas simuladas e sem expor instrumentos ou escores | Não diretamente; entram apenas na geração da narrativa |
 | `marcadores_origem` | marcadores clínicos definidos pelo gerador para compor o cenário sintético | Somente no conjunto de limite superior |
 | `narrativa_clinica` | texto SOAP sintético gerado a partir das informações permitidas | Não diretamente |
 | `marcadores_extraidos` | marcadores recuperados de `narrativa_clinica` pelo processo de PLN | Sim, no conjunto operacional |
@@ -40,3 +41,4 @@ Esta referência define os nomes padronizados das estruturas centrais. Os nomes 
 2. `gravidade_latente_auditoria` não pode entrar nos conjuntos analíticos nem no treinamento dos classificadores.
 3. `marcadores_origem` e `marcadores_extraidos` não são intercambiáveis; a diferença entre eles mede a perda introduzida pela etapa textual.
 4. `prioridade_prevista` deve ser interpretada apenas como saída experimental de uma prova de conceito com dados sintéticos.
+5. O gerador textual não pode receber nomes de instrumentos, números de itens, respostas ordinais, escores ou faixas psicométricas. Esses dados são convertidos localmente em `manifestacoes_psicologicas`.

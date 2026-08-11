@@ -39,7 +39,7 @@ flowchart LR
 
 ### Geração narrativa
 
-`narratives.py` recebe `NarrativeRequest` e produz `NarrativeResponse`. Nenhuma outra etapa depende de API ou fornecedor específico. O projeto inclui `TemplateNarrativeGenerator` e o adaptador opcional `LLMNarrativeGenerator`.
+`narratives.py` traduz respostas psicométricas simuladas em `manifestacoes_psicologicas` qualitativas, recebe esse contrato em `NarrativeRequest` e produz `NarrativeResponse`. Nomes de instrumentos, itens e escores não atravessam a fronteira textual. Nenhuma outra etapa depende de API ou fornecedor específico. O projeto inclui `TemplateNarrativeGenerator` e o adaptador opcional `LLMNarrativeGenerator`.
 
 ### Prioridade
 
@@ -59,6 +59,7 @@ Dependências devem fluir da configuração e dos módulos de geração para art
 
 ```text
 prioridade_referencia não entra no gerador de narrativa
+itens e escores psicométricos não entram no gerador de narrativa
 gravidade_latente_auditoria não entra nos classificadores
 marcadores_origem não substitui marcadores_extraidos no conjunto operacional
 ```

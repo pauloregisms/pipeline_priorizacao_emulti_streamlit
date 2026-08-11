@@ -6,7 +6,7 @@
 | Geração de dados_estruturados, vulnerabilidade_social, gravidade_latente_auditoria e marcadores_origem | `01_generate_profiles.py` | parâmetros estruturais | `profiles.csv` |
 | Itens e totais psicométricos | `02_simulate_psychometrics.py` | perfis, parâmetros de escalas | `psychometrics.csv` |
 | Plausibilidade e consistência | `03_quality_control_base.py` | perfis e escalas | checagens e sumário de qualidade |
-| Narrativa SOAP sintética | `04_generate_narratives.py` | dados_estruturados, indicadores_psicometricos e marcadores_origem; nunca prioridade_referencia; provedor `template` ou `llm` | `narratives.jsonl` e manifest com metadados do provedor |
+| Narrativa SOAP sintética | `04_generate_narratives.py` | dados_estruturados, manifestações psicológicas qualitativas derivadas localmente e marcadores_origem; nunca recebe itens, escores psicométricos ou prioridade_referencia; provedor `template` ou `llm` | `narratives.jsonl` e manifest com metadados do provedor |
 | Matriz de prioridade simulada | `05_assign_reference_priority.py` | dados_estruturados, indicadores_psicometricos, marcadores_origem e regras protocoladas | `prioridade_referencia.csv` |
 | PLN independente | `06_extract_markers.py` | somente narrativas | `marcadores_extraidos.csv`, auditoria, comparador por regras e repetições de estabilidade |
 | Anotação humana | `07_create_annotation_sample.py` | narrativas e estratos | formulário de dupla anotação |
@@ -21,6 +21,8 @@
 ## Garantia contra vazamento de rótulo
 
 A geração de narrativas é executada antes do script que cria `prioridade_referencia`. O contrato da classe `NarrativeRequest`, em `src/emulti_pipeline/narratives.py`, não possui campo de prioridade. Além disso, `04_generate_narratives.py` interrompe a execução se detectar colunas com nomes que sugiram rótulo de prioridade.
+
+Antes da criação de `NarrativeRequest`, as respostas psicométricas são traduzidas localmente em manifestações qualitativas. Nomes de instrumentos, números de itens, respostas ordinais, totais, faixas e pontuações não são enviados ao gerador e são proibidos na narrativa resultante.
 
 ## Camada unificada para modelos de linguagem
 

@@ -42,5 +42,7 @@ pode ser expresso pelo LiteLLM nem pelos parâmetros YAML. Nesse caso:
 - acrescente testes sem rede com uma função de conclusão simulada;
 - documente a decisão arquitetural.
 
-O contrato metodológico não pode mudar. O gerador recebe somente os grupos
-autorizados e o extrator recebe somente a narrativa sintética.
+O contrato metodológico não pode mudar. O gerador recebe somente
+`dados_estruturados`, `manifestacoes_psicologicas` qualitativas e
+`marcadores_origem`. Nomes de instrumentos, números de itens, respostas e escores
+psicométricos são proibidos. O extrator recebe somente a narrativa sintética.

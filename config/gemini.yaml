@@ -2,31 +2,31 @@
 #
 # A seleção do fornecedor ocorre somente neste arquivo. O código Python continua
 # independente de Gemini, OpenAI, Anthropic ou outro backend compatível.
-# O modelo gemini-3.5-flash foi mantido para corresponder ao protocolo descrito
-# na dissertação. Uma troca de versão deve gerar outro YAML e outro run_id.
+# Esta versão fixa o modelo estável gemini-2.5-flash-lite. Qualquer troca de
+# versão deve gerar outro YAML e outro run_id para preservar a rastreabilidade.
 
 extends: "llm.yaml"
 
 narrative:
   provider: "llm"
-  prompt_version: "llm_soap_v1"
+  prompt_version: "llm_soap_v2_qualitative"
   max_retries: 2
   llm:
     backend: "gemini"
-    model_id: "gemini-3.5-flash"
-    generator_id: "llm-gemini-3.5-flash-narrative"
+    model_id: "gemini-2.5-flash-lite"
+    generator_id: "llm-gemini-2.5-flash-lite-narrative"
     api_key_env: "GEMINI_API_KEY"
     response_format: "json_schema"
     temperature: 1.0
-    max_output_tokens: 500
+    max_output_tokens: 2048
     retry_backoff_seconds: 2.0
     send_seed: true
     request_options: {}
 
 extraction:
   provider: "llm"
-  extractor_id: "llm-gemini-3.5-flash-extractor"
-  ontology_version: "ontology_v1"
+  extractor_id: "llm-gemini-2.5-flash-lite-extractor"
+  ontology_version: "ontology_v2"
   prompt_version: "extracao_marcadores_v1"
   max_retries: 2
   stability:
@@ -35,19 +35,19 @@ extraction:
     repetitions: 3
   llm:
     backend: "gemini"
-    model_id: "gemini-3.5-flash"
-    extractor_id: "llm-gemini-3.5-flash-extractor"
+    model_id: "gemini-2.5-flash-lite"
+    extractor_id: "llm-gemini-2.5-flash-lite-extractor"
     api_key_env: "GEMINI_API_KEY"
     response_format: "json_schema"
     temperature: 0.0
-    max_output_tokens: 2200
+    max_output_tokens: 8192
     retry_backoff_seconds: 2.0
     send_seed: true
     request_options: {}
 
 execution:
   action: "executar"
-  run_id: "experimento_gemini_3_5_flash"
+  run_id: "experimento_gemini_2_5_flash_lite"
   stop_after: null
   models: "all"
   skip_explanations: false

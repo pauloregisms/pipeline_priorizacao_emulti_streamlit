@@ -52,7 +52,9 @@ O mapa detalhado entre cada passo metodológico e os scripts está em [MAPA_DE_E
 ## Garantias metodológicas essenciais
 
 - `prioridade_referencia` não é uma variável clínica real; é a saída da matriz de prioridade simulada.
-- O gerador de narrativas recebe somente `dados_estruturados`, `indicadores_psicometricos` e `marcadores_origem`; não recebe `prioridade_referencia`, códigos, nomes de prioridade ou limiares que revelem o rótulo.
+- O gerador de narrativas recebe somente `dados_estruturados`, `manifestacoes_psicologicas` qualitativas e `marcadores_origem`; não recebe nomes de instrumentos, respostas numeradas, escores ou faixas psicométricas.
+- As respostas simuladas dos instrumentos são convertidas localmente em descrições de sensações e atitudes antes da geração textual. Uma validação rejeita narrativas que mencionem instrumentos, escores ou pontuações.
+- O gerador não recebe `prioridade_referencia`, códigos, nomes de prioridade ou limiares que revelem o rótulo.
 - A geração textual ocorre antes da criação de `prioridade_referencia`.
 - A gravidade latente `gravidade_latente_auditoria` não entra nos conjuntos analíticos usados pelos classificadores.
 - O extrator por regras é mantido como referência independente, inclusive quando uma futura versão usar LLM para extração.
@@ -70,6 +72,7 @@ pipeline_priorizacao_emulti/
 ├── docs/                      # documentação versionada
 ├── .streamlit/config.toml     # tema e salvaguardas da interface
 ├── streamlit_app.py           # aplicação somente leitura para a banca
+├── pipeline_priorizacao_emulti_colab.py # executor configurável para o Colab
 ├── .github/                   # modelos de colaboração no GitHub
 ├── README.md                  # entrada rápida para o projeto
 ├── CONTRIBUTING.md            # fluxo de contribuição
@@ -167,6 +170,19 @@ A integração:
 - bloqueia recursivamente campos de prioridade antes da geração;
 - envia ao extrator apenas o identificador sintético e a narrativa;
 - nunca recebe ou deve receber dados reais de pacientes.
+- mostra no console o identificador sintético, a etapa, a tentativa, o progresso,
+  o limite de chamadas restantes e a duração de cada solicitação ao modelo.
+
+O cenário Google AI incluído em `config/gemini.yaml` fixa
+`gemini-2.5-flash-lite` para a geração e a extração. Para executá-lo, defina
+`GEMINI_API_KEY` no ambiente e use um `run_id` próprio:
+
+```bash
+export GEMINI_API_KEY='cole-a-chave-somente-no-terminal'
+python scripts/run_pipeline.py \
+  --config config/gemini.yaml \
+  --run-id experimento_gemini_2_5_flash_lite
+```
 
 Configure `config/llm.yaml` e faça primeiro o teste curto:
 

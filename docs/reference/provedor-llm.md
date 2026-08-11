@@ -34,6 +34,19 @@ Os artefatos registram `backend`, `model_id`, modelo informado na resposta quand
 disponível, motivo de término, temperatura, limite de saída, versão e hash do
 prompt, número de retentativas, timestamp e uso. A chave da API não é registrada.
 
+## Acompanhamento no console
+
+Cada chamada real registra a etapa, a fase, o `patient_id` sintético, a posição da
+operação, a tentativa atual e o modelo. O campo `planned_remaining` informa quantas
+operações lógicas faltam se as próximas respostas forem concluídas na primeira
+tentativa. `max_attempts_remaining` representa o limite superior de chamadas ainda
+possíveis, considerando todas as retentativas configuradas. Falhas e retentativas
+registram apenas o tipo do erro, sem expor a chave ou o conteúdo clínico.
+
+O cliente também verifica o motivo de término antes de interpretar o JSON. Respostas
+encerradas por limite de tokens são identificadas como truncadas e seguem a política
+normal de retentativas.
+
 ## Limites
 
 - O LiteLLM normaliza a interface, mas os recursos variam entre modelos.
@@ -41,3 +54,6 @@ prompt, número de retentativas, timestamp e uso. A chave da API não é registr
 - Saída estruturada deve ser confirmada no modelo escolhido.
 - A reprodutibilidade é de melhor esforço mesmo quando a semente é aceita.
 - Respostas são validadas localmente antes de entrarem no pipeline.
+- O gerador textual recebe manifestações qualitativas, não nomes, itens ou escores
+  de instrumentos psicométricos. Uma referência explícita a instrumento ou
+  pontuação na resposta provoca retentativa.

@@ -87,12 +87,14 @@ priority_rules:
 narrative:
   # "template" mantém a execução local. Use config/llm.yaml para ativar uma API.
   provider: "template"
-  generator_id: "template-simulator-v1"
+  generator_id: "template-simulator-v2-qualitative"
   mode: "offline_smoke_test"
-  prompt_version: "narrativa_soap_v1"
+  prompt_version: "narrativa_soap_v2_qualitative"
   max_retries: 0
   language: "pt-BR"
-  # Não incluir prioridade/rótulo em prompts ou em objetos enviados ao gerador.
+  # Não incluir prioridade/rótulo nem itens, nomes ou escores psicométricos em
+  # prompts ou objetos enviados ao gerador. A etapa 04 realiza previamente uma
+  # tradução local para manifestações psicológicas qualitativas.
   forbidden_input_keys: ["prioridade_referencia", "prioridade_referencia_codigo", "prioridade_prevista", "prioridade_prevista_codigo", "priority", "prioridade", "priority_code", "priority_label", "label", "target", "Yref", "Yhat"]
   # O bloco é neutro: backend e modelo são definidos no cenário executável.
   llm:

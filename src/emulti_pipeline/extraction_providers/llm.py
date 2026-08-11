@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import time
 from datetime import datetime, timezone
 from typing import Any, Callable, Mapping
@@ -19,6 +20,9 @@ from ..markers import (
     normalize_marker,
 )
 from ..utils import json_hash
+
+
+LOGGER = logging.getLogger("emulti_pipeline.llm_calls")
 
 
 _MARKER_SCHEMA: dict[str, Any] = {
@@ -81,7 +85,7 @@ class LLMClinicalExtractor:
         ontology_version: str,
         prompt_version: str,
         temperature: float | None = 0.0,
-        max_output_tokens: int = 2200,
+        max_output_tokens: int = 8192,
         max_retries: int = 2,
         retry_backoff_seconds: float = 2.0,
         base_seed: int = 0,
@@ -117,7 +121,16 @@ class LLMClinicalExtractor:
             f"{narrative}"
         )
 
-    def _extract_one(self, patient_id: str, narrative: str, seed: int) -> dict[str, Any]:
+    def _extract_one(
+        self,
+        patient_id: str,
+        narrative: str,
+        seed: int,
+        *,
+        operation_index: int,
+        operation_total: int,
+        progress_phase: str,
+    ) -> dict[str, Any]:
         prompt = self._prompt(narrative)
         prompt_hash = json_hash(
             {
@@ -139,6 +152,15 @@ class LLMClinicalExtractor:
                     temperature=self.temperature,
                     max_output_tokens=self.max_output_tokens,
                     seed=seed,
+                    trace_context={
+                        "stage": "06_extract_markers",
+                        "phase": progress_phase,
+                        "patient_id": patient_id,
+                        "operation_index": operation_index,
+                        "operation_total": operation_total,
+                        "attempt": attempt + 1,
+                        "max_attempts": self.max_retries + 1,
+                    },
                 )
                 markers = result.data.get("markers")
                 if not isinstance(markers, Mapping):
@@ -179,10 +201,37 @@ class LLMClinicalExtractor:
                 return record
             except Exception as error:  # noqa: BLE001
                 last_error = error
-                if attempt < self.max_retries and self.retry_backoff_seconds > 0:
-                    time.sleep(self.retry_backoff_seconds * (2**attempt))
+                if attempt < self.max_retries:
+                    backoff = self.retry_backoff_seconds * (2**attempt)
+                    LOGGER.warning(
+                        "LLM_RETRY | stage=06_extract_markers | phase=%s | "
+                        "patient_id=%s | operation=%d/%d | failed_attempt=%d/%d | "
+                        "next_attempt=%d/%d | backoff_seconds=%.3f | error_type=%s",
+                        progress_phase,
+                        patient_id,
+                        operation_index,
+                        operation_total,
+                        attempt + 1,
+                        self.max_retries + 1,
+                        attempt + 2,
+                        self.max_retries + 1,
+                        backoff,
+                        type(error).__name__,
+                    )
+                    if backoff > 0:
+                        time.sleep(backoff)
 
         error_type = type(last_error).__name__ if last_error else "UnknownError"
+        LOGGER.error(
+            "LLM_OPERATION_EXHAUSTED | stage=06_extract_markers | phase=%s | "
+            "patient_id=%s | operation=%d/%d | attempts=%d | error_type=%s",
+            progress_phase,
+            patient_id,
+            operation_index,
+            operation_total,
+            self.max_retries + 1,
+            error_type,
+        )
         self.audit_records.append(
             {
                 "patient_id": patient_id,
@@ -212,19 +261,31 @@ class LLMClinicalExtractor:
             **flatten_markers(empty, "marcadores_extraidos_"),
         }
 
-    def extract(self, narrative_frame: pd.DataFrame, *, seed_offset: int = 0) -> pd.DataFrame:
+    def extract(
+        self,
+        narrative_frame: pd.DataFrame,
+        *,
+        seed_offset: int = 0,
+        progress_offset: int = 0,
+        progress_total: int | None = None,
+        progress_phase: str = "primary_extraction",
+    ) -> pd.DataFrame:
         required = {"patient_id", "narrativa_clinica"}
         missing = required - set(narrative_frame.columns)
         if missing:
             raise ValueError(f"Narrativas sem colunas necessárias: {sorted(missing)}")
         self.audit_records = []
         rows = []
+        effective_total = progress_total or (progress_offset + len(narrative_frame))
         for index, record in narrative_frame.reset_index(drop=True).iterrows():
             rows.append(
                 self._extract_one(
                     str(record["patient_id"]),
                     str(record["narrativa_clinica"]),
                     self.base_seed + seed_offset + int(index),
+                    operation_index=progress_offset + int(index) + 1,
+                    operation_total=effective_total,
+                    progress_phase=progress_phase,
                 )
             )
         return pd.DataFrame(rows)

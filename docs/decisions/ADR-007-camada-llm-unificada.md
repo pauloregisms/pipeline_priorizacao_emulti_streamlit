@@ -33,6 +33,9 @@ arquivo YAML em `execute_selected_mode`.
 
 ## Restrições preservadas
 
-O gerador não recebe prioridade de referência nem pistas equivalentes. O extrator
-recebe somente o identificador sintético e a narrativa. Todos os dados permanecem
-inteiramente sintéticos e sem uso assistencial.
+O gerador não recebe prioridade de referência nem pistas equivalentes. Também não
+recebe nomes de instrumentos, números de itens, respostas ordinais, faixas ou
+escores psicométricos. Esses dados são traduzidos localmente em
+`manifestacoes_psicologicas` qualitativas. O extrator mantém o identificador
+sintético apenas para associação local e envia ao modelo somente a narrativa.
+Todos os dados permanecem inteiramente sintéticos e sem uso assistencial.

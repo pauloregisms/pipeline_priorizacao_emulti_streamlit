@@ -39,7 +39,28 @@ def main() -> None:
     extraction_config = dict(config["extraction"])
     extraction_config["flip_rate"] = float(config["simulation"].get("extraction_flip_rate", 0.0))
     extractor = create_clinical_extractor(extraction_config, seed=seed)
-    extracted = extractor.extract(allowed)
+    provider = str(extraction_config.get("provider", "rules")).lower()
+    stability_cfg = extraction_config.get("stability", {})
+    stability_enabled = provider == "llm" and bool(stability_cfg.get("enabled", False))
+    stability_records = (
+        min(int(stability_cfg.get("n_records", 50)), len(allowed))
+        if stability_enabled
+        else 0
+    )
+    stability_repetitions = (
+        max(int(stability_cfg.get("repetitions", 3)), 0)
+        if stability_enabled
+        else 0
+    )
+    total_llm_operations = len(allowed) + stability_records * stability_repetitions
+    if provider == "llm":
+        extracted = extractor.extract(
+            allowed,
+            progress_total=total_llm_operations,
+            progress_phase="primary_extraction",
+        )
+    else:
+        extracted = extractor.extract(allowed)
     output = stage_dir(config, args.run_id, "06_extraction")
     save_csv(extracted, output / "marcadores_extraidos.csv")
 
@@ -47,7 +68,6 @@ def main() -> None:
     if audit_records:
         _write_jsonl(output / "extraction_audit.jsonl", audit_records)
 
-    provider = str(extraction_config.get("provider", "rules")).lower()
     rule_file = None
     if provider != "rules":
         rule_extractor = RuleBasedClinicalExtractor(
@@ -59,14 +79,17 @@ def main() -> None:
         save_csv(rule_extractor.extract(allowed), output / "marcadores_extraidos_regra.csv")
         rule_file = "marcadores_extraidos_regra.csv"
 
-    stability_cfg = extraction_config.get("stability", {})
     stability_files: list[str] = []
-    if provider == "llm" and bool(stability_cfg.get("enabled", False)):
-        n_records = min(int(stability_cfg.get("n_records", 50)), len(allowed))
-        repetitions = int(stability_cfg.get("repetitions", 3))
-        sample = allowed.sample(n=n_records, random_state=seed).sort_values("patient_id")
-        for repetition in range(1, repetitions + 1):
-            result = extractor.extract(sample, seed_offset=repetition * 100_000)
+    if stability_enabled and stability_records > 0 and stability_repetitions > 0:
+        sample = allowed.sample(n=stability_records, random_state=seed).sort_values("patient_id")
+        for repetition in range(1, stability_repetitions + 1):
+            result = extractor.extract(
+                sample,
+                seed_offset=repetition * 100_000,
+                progress_offset=len(allowed) + (repetition - 1) * stability_records,
+                progress_total=total_llm_operations,
+                progress_phase=f"stability_{repetition}_of_{stability_repetitions}",
+            )
             filename = f"stability_run_{repetition}.csv"
             save_csv(result, output / filename)
             stability_files.append(filename)

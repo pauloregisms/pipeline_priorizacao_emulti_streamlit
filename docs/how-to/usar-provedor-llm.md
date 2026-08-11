@@ -83,4 +83,7 @@ Depois de validar a amostra, use uma cópia de `config/llm.yaml`, defina um novo
 modelo, a variável de credencial, a temperatura, o formato de resposta e a data.
 
 Todos os dados devem permanecer sintéticos. O gerador não recebe a prioridade de
-referência e o extrator recebe somente `patient_id` e `narrativa_clinica`.
+referência nem dados psicométricos brutos. A etapa 04 converte localmente as
+respostas simuladas em manifestações psicológicas qualitativas, sem nomes de
+instrumentos, itens, totais, faixas ou escores. O extrator mantém `patient_id`
+apenas para associação local e envia ao modelo somente `narrativa_clinica`.

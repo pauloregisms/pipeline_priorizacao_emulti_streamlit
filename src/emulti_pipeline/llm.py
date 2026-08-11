@@ -10,10 +10,19 @@ from __future__ import annotations
 
 import copy
 import json
+import logging
 import os
 import re
+import time
 from dataclasses import dataclass
 from typing import Any, Callable, Mapping
+
+
+LOGGER = logging.getLogger("emulti_pipeline.llm_calls")
+
+
+class LLMResponseTruncatedError(ValueError):
+    """Indica que o provedor encerrou a resposta por limite de saída."""
 
 
 @dataclass(frozen=True)
@@ -172,6 +181,51 @@ class StructuredLLMClient:
             self._completion = completion
         else:
             self._completion = completion_callable
+        self._call_count = 0
+
+    @staticmethod
+    def _trace_fields(trace_context: Mapping[str, Any] | None) -> dict[str, Any]:
+        """Normaliza somente campos de rastreamento não sensíveis para os logs."""
+
+        context = dict(trace_context or {})
+        operation_index = max(int(context.get("operation_index", 1)), 1)
+        operation_total = max(int(context.get("operation_total", operation_index)), operation_index)
+        attempt = max(int(context.get("attempt", 1)), 1)
+        max_attempts = max(int(context.get("max_attempts", attempt)), attempt)
+        return {
+            "stage": str(context.get("stage", "llm")),
+            "phase": str(context.get("phase", "request")),
+            "patient_id": str(context.get("patient_id", "unknown")),
+            "operation_index": operation_index,
+            "operation_total": operation_total,
+            "attempt": attempt,
+            "max_attempts": max_attempts,
+            "planned_remaining": max(operation_total - operation_index, 0),
+            "max_attempts_remaining": max(
+                (max_attempts - attempt)
+                + (operation_total - operation_index) * max_attempts,
+                0,
+            ),
+        }
+
+    @staticmethod
+    def _finish_reason(choice: Any) -> str | None:
+        value = getattr(choice, "finish_reason", None)
+        if value is None and isinstance(choice, Mapping):
+            value = choice.get("finish_reason")
+        return str(value) if value is not None else None
+
+    @staticmethod
+    def _is_truncated(finish_reason: str | None) -> bool:
+        if finish_reason is None:
+            return False
+        normalized = re.sub(r"[^A-Z0-9]+", "_", finish_reason.upper()).strip("_")
+        return normalized in {
+            "LENGTH",
+            "MAX_TOKENS",
+            "MAX_TOKEN",
+            "MAX_OUTPUT_TOKENS",
+        } or "MAX_TOKENS" in normalized
 
     def generate_json(
         self,
@@ -183,6 +237,7 @@ class StructuredLLMClient:
         temperature: float | None,
         max_output_tokens: int,
         seed: int | None = None,
+        trace_context: Mapping[str, Any] | None = None,
     ) -> StructuredLLMResponse:
         """Solicita um objeto JSON e normaliza a resposta do backend selecionado."""
 
@@ -234,20 +289,77 @@ class StructuredLLMClient:
         if seed is not None and self.send_seed:
             kwargs["seed"] = int(seed)
 
-        response = self._completion(**kwargs)
-        choice = _first_choice(response)
-        raw_text = _choice_content(choice)
-        data = parse_json_object(raw_text)
+        trace = self._trace_fields(trace_context)
+        self._call_count += 1
+        call_number = self._call_count
+        log_prefix = (
+            "stage=%s | phase=%s | patient_id=%s | operation=%d/%d | "
+            "attempt=%d/%d | api_call=%d"
+        )
+        LOGGER.info(
+            "LLM_CALL_START | " + log_prefix
+            + " | planned_remaining=%d | max_attempts_remaining=%d | model=%s",
+            trace["stage"],
+            trace["phase"],
+            trace["patient_id"],
+            trace["operation_index"],
+            trace["operation_total"],
+            trace["attempt"],
+            trace["max_attempts"],
+            call_number,
+            trace["planned_remaining"],
+            trace["max_attempts_remaining"],
+            self.qualified_model_id,
+        )
+        started_at = time.perf_counter()
+        try:
+            response = self._completion(**kwargs)
+            choice = _first_choice(response)
+            finish_reason = self._finish_reason(choice)
+            raw_text = _choice_content(choice)
+            if self._is_truncated(finish_reason):
+                raise LLMResponseTruncatedError(
+                    "O provedor encerrou a resposta por limite de tokens de saída."
+                )
+            data = parse_json_object(raw_text)
+        except Exception as error:  # noqa: BLE001
+            LOGGER.warning(
+                "LLM_CALL_FAILED | " + log_prefix
+                + " | duration_seconds=%.3f | error_type=%s",
+                trace["stage"],
+                trace["phase"],
+                trace["patient_id"],
+                trace["operation_index"],
+                trace["operation_total"],
+                trace["attempt"],
+                trace["max_attempts"],
+                call_number,
+                time.perf_counter() - started_at,
+                type(error).__name__,
+            )
+            raise
 
-        finish_reason = getattr(choice, "finish_reason", None)
-        if finish_reason is None and isinstance(choice, Mapping):
-            finish_reason = choice.get("finish_reason")
         response_model = getattr(response, "model", None)
         if response_model is None and isinstance(response, Mapping):
             response_model = response.get("model")
         usage = getattr(response, "usage", None)
         if usage is None and isinstance(response, Mapping):
             usage = response.get("usage")
+
+        LOGGER.info(
+            "LLM_CALL_SUCCESS | " + log_prefix
+            + " | duration_seconds=%.3f | finish_reason=%s",
+            trace["stage"],
+            trace["phase"],
+            trace["patient_id"],
+            trace["operation_index"],
+            trace["operation_total"],
+            trace["attempt"],
+            trace["max_attempts"],
+            call_number,
+            time.perf_counter() - started_at,
+            finish_reason or "unknown",
+        )
 
         return StructuredLLMResponse(
             data=data,

@@ -80,13 +80,31 @@ class MethodologicalContractTests(unittest.TestCase):
             completion_callable=completion,
             max_retries=0,
         )
-        result = extractor.extract(pd.DataFrame({"patient_id": ["SYN-1"], "narrativa_clinica": ["Nega ideação atual; houve ideação no passado."]}))
+        with self.assertLogs("emulti_pipeline.llm_calls", level="INFO") as captured:
+            result = extractor.extract(
+                pd.DataFrame(
+                    {
+                        "patient_id": ["SYN-1"],
+                        "narrativa_clinica": [
+                            "Nega ideação atual; houve ideação no passado."
+                        ],
+                    }
+                ),
+                progress_offset=3,
+                progress_total=10,
+                progress_phase="stability_1_of_3",
+            )
         call = completion.calls[0]
         self.assertEqual(call["model"], "anthropic/modelo-teste")
         user_prompt = call["messages"][1]["content"]
         self.assertIn("Narrativa (única fonte permitida)", user_prompt)
         self.assertNotIn("prioridade", user_prompt.lower())
         self.assertEqual(result.loc[0, "marcadores_extraidos_ideacao_suicida_remote_present"], 1)
+        logs = "\n".join(captured.output)
+        self.assertIn("stage=06_extract_markers", logs)
+        self.assertIn("phase=stability_1_of_3", logs)
+        self.assertIn("patient_id=SYN-1", logs)
+        self.assertIn("operation=4/10", logs)
 
     def test_origin_and_extracted_sets_have_identical_feature_schema(self) -> None:
         origin = flatten_markers(_empty_markers(), "marcadores_origem_")

@@ -9,5 +9,5 @@ dataset,model,development_f1_macro,final_test_f1_macro,final_best_params
 02_limite_superior_marcadores_origem,xgboost,0.9001062295782123,0.8576131812113121,"{'model__max_depth': 5, 'model__min_child_weight': 1, 'model__subsample': 0.85}"
 03_operacional_marcadores_extraidos,rule_baseline,0.8511727024095832,0.8005323254445291,
 03_operacional_marcadores_extraidos,ordinal_logit,0.8269639589140942,0.8454834360554699,{'model__alpha': 0.5}
-03_operacional_marcadores_extraidos,random_forest,0.886724682266899,0.8379351390304999,"{'model__max_depth': 12, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 1}"
-03_operacional_marcadores_extraidos,xgboost,0.889181659191722,0.8509763286359031,"{'model__max_depth': 5, 'model__min_child_weight': 1, 'model__subsample': 0.85}"
+03_operacional_marcadores_extraidos,random_forest,0.8761560387301932,0.839140261367705,"{'model__max_depth': 12, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 1}"
+03_operacional_marcadores_extraidos,xgboost,0.8888063629018509,0.8549008815193078,"{'model__max_depth': 5, 'model__min_child_weight': 1, 'model__subsample': 0.85}"

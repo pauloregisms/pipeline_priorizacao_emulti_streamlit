@@ -34,8 +34,8 @@ Este relatório descreve uma prova de conceito inteiramente sintética. As métr
 | 02_limite_superior_marcadores_origem | xgboost       |               0.900106 |              0.857613 | {'model__max_depth': 5, 'model__min_child_weight': 1, 'model__subsample': 0.85}         |
 | 03_operacional_marcadores_extraidos  | rule_baseline |               0.851173 |              0.800532 | nan                                                                                     |
 | 03_operacional_marcadores_extraidos  | ordinal_logit |               0.826964 |              0.845483 | {'model__alpha': 0.5}                                                                   |
-| 03_operacional_marcadores_extraidos  | random_forest |               0.886725 |              0.837935 | {'model__max_depth': 12, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 1}   |
-| 03_operacional_marcadores_extraidos  | xgboost       |               0.889182 |              0.850976 | {'model__max_depth': 5, 'model__min_child_weight': 1, 'model__subsample': 0.85}         |
+| 03_operacional_marcadores_extraidos  | random_forest |               0.876156 |              0.83914  | {'model__max_depth': 12, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 1}   |
+| 03_operacional_marcadores_extraidos  | xgboost       |               0.888806 |              0.854901 | {'model__max_depth': 5, 'model__min_child_weight': 1, 'model__subsample': 0.85}         |
 
 ## Tabela simplificada de classificação
 - Modelo selecionado: xgboost (maior F1 macro na validação cruzada aninhada (desenvolvimento)).

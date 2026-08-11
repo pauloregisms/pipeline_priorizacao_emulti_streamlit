@@ -12,7 +12,8 @@ flowchart LR
     VULN --> ORIGEM
     GRAV --> ORIGEM
     DADOS --> NARR["narrativa_clinica\nformato SOAP"]
-    INDIC --> NARR
+    INDIC --> QUALI["manifestacoes_psicologicas\ntradução qualitativa local"]
+    QUALI --> NARR
     ORIGEM --> NARR
     NARR --> EXTRAIDOS["marcadores_extraidos\nrecuperados do texto"]
     DADOS --> REFERENCIA["prioridade_referencia\nregra simulada"]
@@ -29,7 +30,7 @@ flowchart LR
 1. `01_generate_profiles.py` gera `dados_estruturados`, `vulnerabilidade_social`, `gravidade_latente_auditoria` e `marcadores_origem`.
 2. `02_simulate_psychometrics.py` produz itens e totais de `indicadores_psicometricos` a partir de sinais latentes e atributos.
 3. `03_quality_control_base.py` valida faixas, somas, consistência e propriedades descritivas.
-4. `04_generate_narratives.py` gera `narrativa_clinica` a partir de `dados_estruturados`, `indicadores_psicometricos` e `marcadores_origem`.
+4. `04_generate_narratives.py` traduz localmente as respostas psicométricas em `manifestacoes_psicologicas` e gera `narrativa_clinica` a partir de `dados_estruturados`, dessas descrições qualitativas e de `marcadores_origem`. Nomes de instrumentos, itens, respostas numéricas, totais e faixas não são fornecidos ao gerador nem aceitos no texto resultante.
 5. `05_assign_reference_priority.py` gera `prioridade_referencia` por uma matriz de regras simuladas.
 6. `06_extract_markers.py` transforma somente `narrativa_clinica` em `marcadores_extraidos`, pelo backend LLM configurado no experimento principal e por regras como comparador independente.
 7. `07`–`08` medem presença e qualificadores, omissão, alucinação, estabilidade, bootstrap e concordância humana quando disponível.

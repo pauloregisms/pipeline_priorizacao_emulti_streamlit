@@ -6,6 +6,11 @@
 - Seleção de Google AI, OpenAI, Anthropic ou outro backend compatível por `backend`, `model_id` e `api_key_env` no YAML.
 - Novas configurações `config/llm.yaml` e `config/llm_smoke.yaml`; remoção dos modos e arquivos executáveis associados a um fornecedor.
 - Executor do Colab com modos `smoke` e `llm_smoke`, função `require_llm_api_keys()` e caminho YAML explícito em `execute_selected_mode()`.
+- Correção do contrato textual: itens, nomes, totais, faixas e escores psicométricos deixaram de ser enviados ao gerador. A etapa 04 produz `manifestacoes_psicologicas` qualitativas localmente e rejeita narrativas que exponham instrumentos ou pontuações.
+- Configuração `config/gemini.yaml` atualizada para `gemini-2.5-flash-lite`, com limites de saída ampliados para reduzir respostas JSON interrompidas.
+- Logs por chamada ao LLM com etapa, fase, identificador sintético, tentativa, progresso, chamadas restantes e duração, incluindo retentativas e detecção explícita de truncamento.
+- Interface Streamlit com nomes de artefatos centralizados e menu de navegação por links.
+- Executor genérico do Google Colab incorporado à raiz do projeto.
 
 Este arquivo registra mudanças relevantes para quem executa, estende, revisa ou reproduz o pipeline.
 

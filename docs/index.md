@@ -19,7 +19,7 @@ A organização segue quatro tipos de necessidade:
 ## Conteúdo essencial para novos desenvolvedores
 
 1. [Visão geral](explanation/visao-geral.md) — objetivo, limites e vocabulário do projeto.
-2. [Metodologia e fluxo de dados](explanation/metodologia-e-fluxo.md) — relação entre `dados_estruturados`, `indicadores_psicometricos`, `marcadores_origem`, `narrativa_clinica`, `marcadores_extraidos`, `prioridade_referencia` e `prioridade_prevista`.
+2. [Metodologia e fluxo de dados](explanation/metodologia-e-fluxo.md) — relação entre `dados_estruturados`, `indicadores_psicometricos`, `manifestacoes_psicologicas`, `marcadores_origem`, `narrativa_clinica`, `marcadores_extraidos`, `prioridade_referencia` e `prioridade_prevista`.
 3. [Primeira execução local](tutorials/primeira-execucao.md) — instalação e smoke test.
 4. [Nomenclatura do pipeline](reference/nomenclatura.md) — nomes padronizados das estruturas centrais.
 5. [Contratos de dados](reference/contratos-de-dados.md) — entradas e saídas formais.
@@ -35,6 +35,7 @@ Antes de editar o código, tenha clareza sobre estas três restrições:
 - **Não há dados reais de pacientes.**
 - **`prioridade_referencia` não é prioridade clínica real; é uma referência simulada.**
 - **O gerador de narrativas não pode receber prioridade, códigos, limiares ou pista equivalente.**
+- **O gerador recebe manifestações psicológicas qualitativas, nunca nomes de instrumentos, itens, respostas ou escores psicométricos.**
 
 ## Uso no GitHub
 

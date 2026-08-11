@@ -6,7 +6,7 @@ primary,ideacao_suicida,temporality,582,,,,1.0,,
 primary,ideacao_suicida,severity,582,,,,0.8986254295532646,0.47330316742081446,
 primary,ideacao_suicida,certainty,582,,,,1.0,1.0,
 primary,ideacao_suicida,experiencer,582,,,,1.0,,
-primary,ideacao_suicida,severity_code,582,,,,0.8986254295532646,0.9105086760037737,0.1013745704467354
+primary,ideacao_suicida,severity_code,582,,,,0.8986254295532646,0.7823485415108452,0.1013745704467354
 primary,planejamento_suicida,present,800,1.0,1.0,1.0,1.0,1.0,
 primary,planejamento_suicida,negated,800,1.0,1.0,1.0,1.0,1.0,
 primary,planejamento_suicida,remote_present,800,0.0,0.0,0.0,1.0,,

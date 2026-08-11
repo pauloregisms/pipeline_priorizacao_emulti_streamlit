@@ -85,9 +85,9 @@ priority_rules:
   source_note: Substituir por matriz de prioridade validada por especialistas.
 narrative:
   provider: template
-  generator_id: template-simulator-v1
-  mode: offline_smoke_test
-  prompt_version: narrativa_soap_v1
+  generator_id: template-simulator-v2-qualitative
+  mode: local_seeded_generator
+  prompt_version: narrativa_soap_v2_qualitative
   max_retries: 0
   language: pt-BR
   forbidden_input_keys:
@@ -103,31 +103,39 @@ narrative:
   - target
   - Yref
   - Yhat
-  gemini:
-    generator_id: gemini-api-gemini-3.5-flash
-    model_id: gemini-3.5-flash
-    api_key_env: GEMINI_API_KEY
+  llm:
+    backend: CONFIGURE_BACKEND
+    model_id: CONFIGURE_MODEL_ID
+    generator_id: llm-configured-generator
+    api_key_env: LLM_API_KEY
+    response_format: json_schema
     temperature: 1.0
     max_output_tokens: 500
     retry_backoff_seconds: 2.0
+    send_seed: false
+    request_options: {}
 extraction:
   provider: rules
   extractor_id: rule-dictionary-qualified-v2
   ontology_version: ontology_v2
   prompt_version: extracao_marcadores_v1
-  max_retries: 2
+  max_retries: 0
   bootstrap_repetitions: 50
   stability:
     enabled: false
     n_records: 50
     repetitions: 3
-  gemini:
-    extractor_id: gemini-api-gemini-3.5-flash-extractor-v1
-    model_id: gemini-3.5-flash
-    api_key_env: GEMINI_API_KEY
+  llm:
+    backend: CONFIGURE_BACKEND
+    model_id: CONFIGURE_MODEL_ID
+    extractor_id: llm-configured-extractor
+    api_key_env: LLM_API_KEY
+    response_format: json_schema
     temperature: 0.0
     max_output_tokens: 2200
     retry_backoff_seconds: 2.0
+    send_seed: false
+    request_options: {}
   markers:
   - ideacao_suicida
   - planejamento_suicida
@@ -186,3 +194,15 @@ sensitivity:
       priority_rules:
         high_priority_cutoff: 3.4
         moderate_priority_cutoff: 1.5
+execution:
+  action: executar
+  run_id: demonstracao_precarregada
+  stop_after: null
+  models: all
+  skip_explanations: false
+  skip_report: false
+  run_tests: true
+  validate_streamlit_artifacts: true
+  replace_existing_run: true
+  save_results: true
+  package_project: true

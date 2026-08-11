@@ -36,6 +36,7 @@ Este projeto não demonstra:
 | `vulnerabilidade_social` | índice sintético de vulnerabilidade social derivado de componentes de `dados_estruturados` | Sim, por meio de `social_vulnerability` |
 | `gravidade_latente_auditoria` | gravidade latente interna ao gerador | Não |
 | `indicadores_psicometricos` | itens e totais psicométricos simulados | Sim; cenário-base usa totais |
+| `manifestacoes_psicologicas` | tradução qualitativa local das sensações e atitudes representadas pelas respostas simuladas, sem instrumentos ou escores | Não diretamente; usada apenas para formar a narrativa |
 | `marcadores_origem` | marcadores clínicos definidos pelo gerador para compor o cenário | Somente no conjunto de limite superior |
 | `narrativa_clinica` | narrativa SOAP sintética | Não diretamente; origina `marcadores_extraidos` |
 | `marcadores_extraidos` | marcadores extraídos de `narrativa_clinica` | Sim, no conjunto operacional |

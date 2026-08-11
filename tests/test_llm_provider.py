@@ -9,11 +9,12 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from emulti_pipeline.config import load_config
-from emulti_pipeline.llm import StructuredLLMClient
+from emulti_pipeline.llm import LLMResponseTruncatedError, StructuredLLMClient
 from emulti_pipeline.narrative_providers.llm import LLMNarrativeGenerator
 from emulti_pipeline.narratives import (
     NarrativeRequest,
     TemplateNarrativeGenerator,
+    build_qualitative_psychological_context,
     create_narrative_generator,
 )
 
@@ -39,12 +40,38 @@ class _FakeCompletion:
         )
 
 
+class _SequenceCompletion:
+    def __init__(self, responses: list[tuple[str, str]]) -> None:
+        self.responses = list(responses)
+        self.calls: list[dict] = []
+
+    def __call__(self, **kwargs):
+        self.calls.append(kwargs)
+        content, finish_reason = self.responses.pop(0)
+        return SimpleNamespace(
+            model="backend-model-version",
+            choices=[
+                SimpleNamespace(
+                    finish_reason=finish_reason,
+                    message=SimpleNamespace(content=content),
+                )
+            ],
+            usage={},
+        )
+
+
 def _request() -> NarrativeRequest:
     return NarrativeRequest(
         patient_id="SYN-0001",
         seed=1234,
         dados_estruturados={"age_years": 35, "social_vulnerability": 0.4},
-        indicadores_psicometricos={"phq9_total": 12, "gad7_total": 11, "idate_estado_total": 52},
+        manifestacoes_psicologicas={
+            "sintese": "refere manifestações emocionais ocasionais e oscilantes",
+            "estado_emocional_atual": "tensão emocional ocasional no momento",
+            "manifestacoes_relevantes": [
+                {"descricao": "dificuldade de concentração", "frequencia": "ocasional"}
+            ],
+        },
         marcadores_origem={
             "ideacao_suicida": 0,
             "planejamento_suicida": 0,
@@ -91,7 +118,12 @@ class LLMNarrativeGeneratorTests(unittest.TestCase):
             max_retries=0,
         )
 
-        response = generator.generate(_request())
+        with self.assertLogs("emulti_pipeline.llm_calls", level="INFO") as captured:
+            response = generator.generate(
+                _request(),
+                progress_index=2,
+                progress_total=5,
+            )
 
         self.assertEqual(response.patient_id, "SYN-0001")
         self.assertTrue(response.narrativa_clinica.startswith("S - "))
@@ -101,6 +133,11 @@ class LLMNarrativeGeneratorTests(unittest.TestCase):
         self.assertEqual(response.generation_metadata["forbidden_label_check"], "passed")
         self.assertNotIn("api_key", response.generation_metadata)
         self.assertEqual(len(completion.calls), 1)
+        logs = "\n".join(captured.output)
+        self.assertIn("patient_id=SYN-0001", logs)
+        self.assertIn("operation=2/5", logs)
+        self.assertIn("attempt=1/1", logs)
+        self.assertIn("planned_remaining=3", logs)
 
         call = completion.calls[0]
         self.assertEqual(call["model"], "openai/modelo-teste")
@@ -109,6 +146,142 @@ class LLMNarrativeGeneratorTests(unittest.TestCase):
         user_prompt = call["messages"][1]["content"]
         self.assertNotIn("prioridade_referencia", user_prompt)
         self.assertNotIn("prioridade_prevista", user_prompt)
+        payload_text = user_prompt.split("Os dados abaixo são a única fonte de informação permitida:\n", 1)[1]
+        self.assertNotIn("phq", payload_text.lower())
+        self.assertNotIn("gad", payload_text.lower())
+        self.assertNotIn("idate", payload_text.lower())
+        self.assertNotIn("escore", payload_text.lower())
+
+    def test_logs_retry_and_recovers_after_invalid_json(self) -> None:
+        valid = json.dumps(
+            {
+                "subjective": "Refere tensão ocasional.",
+                "assessment": "Narrativa sintética coerente.",
+            },
+            ensure_ascii=False,
+        )
+        completion = _SequenceCompletion([('{"subjective": "incompleta', "stop"), (valid, "stop")])
+        generator = LLMNarrativeGenerator(
+            llm_configuration={"backend": "openai", "model_id": "modelo-teste"},
+            generator_id="llm-test",
+            completion_callable=completion,
+            max_retries=1,
+            retry_backoff_seconds=0,
+        )
+
+        with self.assertLogs("emulti_pipeline.llm_calls", level="INFO") as captured:
+            response = generator.generate(_request(), progress_index=1, progress_total=4)
+
+        self.assertEqual(response.generation_metadata["retry_count"], 1)
+        self.assertEqual(len(completion.calls), 2)
+        logs = "\n".join(captured.output)
+        self.assertIn("LLM_RETRY", logs)
+        self.assertIn("next_attempt=2/2", logs)
+        self.assertIn("error_type=JSONDecodeError", logs)
+
+    def test_detects_provider_truncation_before_parsing_json(self) -> None:
+        completion = _SequenceCompletion([('{"subjective": "incompleta', "MAX_TOKENS")])
+        client = StructuredLLMClient(
+            {"backend": "gemini", "model_id": "modelo-teste"},
+            completion_callable=completion,
+        )
+
+        with self.assertRaises(LLMResponseTruncatedError):
+            client.generate_json(
+                system_instruction="Sistema",
+                prompt="Solicitação",
+                response_schema={"type": "object", "properties": {}},
+                schema_name="test",
+                temperature=0.0,
+                max_output_tokens=10,
+                trace_context={"patient_id": "SYN-0001"},
+            )
+
+    def test_translates_item_responses_without_exposing_instruments_or_scores(self) -> None:
+        scales = {
+            **{f"phq9_item_{index:02d}": 0 for index in range(1, 10)},
+            **{f"gad7_item_{index:02d}": 0 for index in range(1, 8)},
+            **{f"idate_estado_item_{index:02d}_score": 1 for index in range(1, 21)},
+            "phq9_total": 0,
+            "gad7_total": 0,
+            "idate_estado_total": 20,
+        }
+        scales["phq9_item_07"] = 2
+        scales["gad7_item_04"] = 3
+
+        context = build_qualitative_psychological_context(scales)
+        serialized = json.dumps(context, ensure_ascii=False).lower()
+
+        self.assertIn("dificuldade de concentração", serialized)
+        self.assertIn("dificuldade para relaxar", serialized)
+        for forbidden in ("phq", "gad", "idate", "item", "total", "escore", "pontuação"):
+            self.assertNotIn(forbidden, serialized)
+
+    def test_rejects_raw_psychometric_key_in_narrative_request(self) -> None:
+        completion = _FakeCompletion(
+            {"subjective": "Relato sintético.", "assessment": "Avaliação sintética."}
+        )
+        generator = LLMNarrativeGenerator(
+            llm_configuration={"backend": "openai", "model_id": "modelo-teste"},
+            generator_id="llm-test",
+            completion_callable=completion,
+            max_retries=0,
+        )
+        request = _request()
+        object.__setattr__(
+            request,
+            "manifestacoes_psicologicas",
+            {"sintese": "qualitativa", "phq9_total": 12},
+        )
+
+        with self.assertRaises(ValueError):
+            generator.generate(request)
+        self.assertEqual(completion.calls, [])
+
+    def test_rejects_numeric_value_disguised_as_qualitative_context(self) -> None:
+        completion = _FakeCompletion(
+            {"subjective": "Relato sintético.", "assessment": "Avaliação sintética."}
+        )
+        generator = LLMNarrativeGenerator(
+            llm_configuration={"backend": "openai", "model_id": "modelo-teste"},
+            generator_id="llm-test",
+            completion_callable=completion,
+            max_retries=0,
+        )
+        request = _request()
+        object.__setattr__(
+            request,
+            "manifestacoes_psicologicas",
+            {
+                "sintese": "qualitativa",
+                "estado_emocional_atual": "tensão ocasional",
+                "manifestacoes_relevantes": [
+                    {"descricao": "dificuldade de concentração", "frequencia": 2}
+                ],
+            },
+        )
+
+        with self.assertRaises(ValueError):
+            generator.generate(request)
+        self.assertEqual(completion.calls, [])
+
+    def test_rejects_narrative_that_mentions_psychometric_score(self) -> None:
+        completion = _FakeCompletion(
+            {
+                "subjective": "Apresentou pontuação de 12 pontos no questionário.",
+                "assessment": "Avaliação sintética.",
+            }
+        )
+        generator = LLMNarrativeGenerator(
+            llm_configuration={"backend": "openai", "model_id": "modelo-teste"},
+            generator_id="llm-test",
+            completion_callable=completion,
+            max_retries=0,
+        )
+
+        with self.assertRaises(RuntimeError):
+            generator.generate(_request())
+        self.assertEqual(len(completion.calls), 1)
 
     def test_anthropic_backend_is_selected_only_by_configuration(self) -> None:
         completion = _FakeCompletion(
