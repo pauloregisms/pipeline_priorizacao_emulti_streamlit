@@ -1,0 +1,10 @@
+{
+  "best_params": {
+    "model__alpha": 0.5
+  },
+  "best_inner_score": 0.8171902807186089,
+  "model_name": "ordinal_logit",
+  "converged": false,
+  "optimization_message": "STOP: TOTAL NO. OF F,G EVALUATIONS EXCEEDS LIMIT",
+  "interpretation": "Modelo ajustado apenas no desenvolvimento; explicações devem usar conjunto-teste final."
+}

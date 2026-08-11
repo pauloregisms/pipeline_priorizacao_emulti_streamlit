@@ -1,0 +1,41 @@
+{
+  "extractors": [
+    {
+      "extractor": "primary",
+      "n": 500,
+      "macro_precision": 0.9485037444063955,
+      "macro_recall": 0.8984374904486827,
+      "macro_f1": 0.9134763452595142,
+      "micro_precision": 0.8849056603773585,
+      "micro_recall": 0.938,
+      "micro_f1": 0.9106796116504854,
+      "omission_rate": 0.062,
+      "hallucination_rate": 0.0305,
+      "qualification_error_rate": 0.1847244094488189,
+      "failed_extractions": 0,
+      "invalid_or_failed_extractions": 0,
+      "retry_count": 0
+    },
+    {
+      "extractor": "rule_baseline",
+      "n": 500,
+      "macro_precision": 0.2890534115211466,
+      "macro_recall": 0.46693973805695566,
+      "macro_f1": 0.23590397902803234,
+      "micro_precision": 0.203601108033241,
+      "micro_recall": 0.294,
+      "micro_f1": 0.24058919803600654,
+      "omission_rate": 0.706,
+      "hallucination_rate": 0.2875,
+      "qualification_error_rate": 0.3590551181102362,
+      "failed_extractions": 0,
+      "invalid_or_failed_extractions": 0,
+      "retry_count": 0
+    }
+  ],
+  "bootstrap_repetitions": 200,
+  "human_annotation": {
+    "available": false
+  },
+  "interpretation": "A referência sintética mede preservação controlada; validação humana independente permanece necessária para validade externa."
+}

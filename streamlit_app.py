@@ -21,7 +21,7 @@ DEMO_FILE_NAMES = {
     "downloads": {
         "report": "relatorio_execucao_demo.md",
         "configuration": "configuracao_resolvida_demo.yaml",
-        "artifacts": "artefatos_demonstracao_precarregada.zip",
+        "artifacts": "artefatos_experimento_gemini31flash_lite.zip",
     },
     "modeling": {
         "metrics": "final_test_metrics.csv",
@@ -63,10 +63,10 @@ from emulti_pipeline.demo import (  # noqa: E402
 )
 
 
-RUN_ROOT = PROJECT_ROOT / "demo_artifacts" / DEMO_RUN_ID
+RUN_ROOT = PROJECT_ROOT / "artifacts" / DEMO_RUN_ID
 
 st.set_page_config(
-    page_title="Pipeline e-Multi — demonstração sintética",
+    page_title="Pipeline e-Multi — Demonstração sintética usando Gemini 3.1 Flash Lite",
     page_icon="🧪",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -580,7 +580,7 @@ with st.sidebar:
     st.header("Demonstração da dissertação")
     page = render_navigation_menu()
     st.divider()
-    st.caption("Execução congelada: demonstracao_precarregada")
+    st.caption("Execução congelada: experimento_gemini31flash_lite")
     st.caption("Sem upload, sem reexecução e sem acesso a dados reais.")
 
 demo_banner()

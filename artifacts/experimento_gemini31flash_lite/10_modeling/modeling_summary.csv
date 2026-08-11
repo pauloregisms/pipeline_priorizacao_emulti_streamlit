@@ -1,0 +1,13 @@
+dataset,model,development_f1_macro,final_test_f1_macro,final_best_params
+01_estruturados_escores,rule_baseline,0.3082229178800233,0.3222812412636287,
+01_estruturados_escores,ordinal_logit,0.4767826111607206,0.5481374807987711,{'model__alpha': 1.0}
+01_estruturados_escores,random_forest,0.5287804074296377,0.5862828755113968,"{'model__max_depth': None, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 5}"
+01_estruturados_escores,xgboost,0.5109297509201439,0.351527698458024,"{'model__max_depth': 3, 'model__min_child_weight': 1, 'model__subsample': 0.85}"
+02_limite_superior_marcadores_origem,rule_baseline,1.0,1.0,
+02_limite_superior_marcadores_origem,ordinal_logit,0.8188868566402985,0.8797534068786502,{'model__alpha': 0.5}
+02_limite_superior_marcadores_origem,random_forest,0.8442023894390399,0.867415514592934,"{'model__max_depth': 12, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 1}"
+02_limite_superior_marcadores_origem,xgboost,0.803132081685711,0.8935325091575093,"{'model__max_depth': 3, 'model__min_child_weight': 1, 'model__subsample': 0.85}"
+03_operacional_marcadores_extraidos,rule_baseline,0.7755236772394247,0.8267543859649122,
+03_operacional_marcadores_extraidos,ordinal_logit,0.7980741965716196,0.7567970665912092,{'model__alpha': 0.5}
+03_operacional_marcadores_extraidos,random_forest,0.7540838583872593,0.819053724053724,"{'model__max_depth': None, 'model__max_features': 'sqrt', 'model__min_samples_leaf': 1}"
+03_operacional_marcadores_extraidos,xgboost,0.7374918741542391,0.8607513661202186,"{'model__max_depth': 3, 'model__min_child_weight': 1, 'model__subsample': 0.85}"

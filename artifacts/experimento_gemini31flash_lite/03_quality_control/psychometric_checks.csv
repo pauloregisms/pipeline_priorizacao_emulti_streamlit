@@ -1,0 +1,10 @@
+check,passed,details
+phq9_itens_0_3,True,Itens PHQ-9 devem variar de 0 a 3.
+gad7_itens_0_3,True,Itens GAD-7 devem variar de 0 a 3.
+idate_itens_1_4,True,Itens pontuados do IDATE devem variar de 1 a 4.
+phq9_total_0_27,True,Total PHQ-9 deve variar de 0 a 27.
+gad7_total_0_21,True,Total GAD-7 deve variar de 0 a 21.
+idate_total_20_80,True,Total IDATE-Estado deve variar de 20 a 80.
+phq9_total_corresponde_a_soma,True,Total deve ser derivado dos itens.
+gad7_total_corresponde_a_soma,True,Total deve ser derivado dos itens.
+idate_total_corresponde_a_soma,True,Total deve ser derivado dos itens pontuados.

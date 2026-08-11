@@ -1,0 +1,10 @@
+{
+  "run_id": "experimento_gemini31flash_lite",
+  "config_hash": "74e8ef02c66315075c05bbba6f660ca51861a9af272fed1bc10c4e264b47bd8c",
+  "config_path": "/content/pipeline_priorizacao_emulti_streamlit/config/gemini.yaml",
+  "project": {
+    "name": "pipeline_priorizacao_emulti",
+    "run_description": "Cenário-base de prova de conceito com dados inteiramente sintéticos",
+    "parameter_status": "ILUSTRATIVO - CALIBRAR ANTES DA ANÁLISE DEFINITIVA"
+  }
+}

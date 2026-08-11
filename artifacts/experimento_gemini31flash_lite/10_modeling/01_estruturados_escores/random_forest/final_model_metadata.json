@@ -1,0 +1,12 @@
+{
+  "best_params": {
+    "model__max_depth": null,
+    "model__max_features": "sqrt",
+    "model__min_samples_leaf": 5
+  },
+  "best_inner_score": 0.48841643941642277,
+  "model_name": "random_forest",
+  "converged": null,
+  "optimization_message": null,
+  "interpretation": "Modelo ajustado apenas no desenvolvimento; explicações devem usar conjunto-teste final."
+}

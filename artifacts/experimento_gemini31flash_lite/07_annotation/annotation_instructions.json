@@ -1,0 +1,17 @@
+{
+  "instructions": "Dois anotadores devem preencher cópias separadas, de forma independente, sem acesso à prioridade ou aos marcadores de origem. Divergências devem ser adjudicadas por um terceiro revisor. present representa achado atual afirmado; remote_present registra antecedente.",
+  "fields": [
+    "present",
+    "negated",
+    "remote_present",
+    "temporality",
+    "severity",
+    "severity_code",
+    "certainty",
+    "experiencer",
+    "evidence"
+  ],
+  "n_selected": 120,
+  "n_critical_cases": 34,
+  "blinded": true
+}

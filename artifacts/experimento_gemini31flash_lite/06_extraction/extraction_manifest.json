@@ -1,0 +1,27 @@
+{
+  "provider": "llm",
+  "extractor_id": "llm-gemini-3.1-flash-lite-extractor",
+  "ontology_version": "ontology_v2",
+  "backend": "gemini",
+  "model_id": "gemini-3.1-flash-lite",
+  "n_narratives": 500,
+  "failure_count": 0,
+  "retry_count": 0,
+  "rule_baseline_file": "marcadores_extraidos_regra.csv",
+  "stability_files": [
+    "stability_run_1.csv",
+    "stability_run_2.csv",
+    "stability_run_3.csv"
+  ],
+  "input_contract": [
+    "patient_id",
+    "narrativa_clinica"
+  ],
+  "forbidden_inputs": [
+    "dados_estruturados",
+    "indicadores_psicometricos",
+    "marcadores_origem",
+    "prioridade_referencia"
+  ],
+  "note": "A extração recebe somente a narrativa sintética; a regra independente é preservada como comparador."
+}

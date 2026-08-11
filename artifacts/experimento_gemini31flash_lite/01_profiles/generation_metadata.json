@@ -1,0 +1,19 @@
+{
+  "seed": 20260324,
+  "n_records": 500,
+  "marker_semantics": {
+    "schema": "marker-schema-v2",
+    "fields": [
+      "present",
+      "negated",
+      "remote_present",
+      "temporality",
+      "severity",
+      "severity_code",
+      "certainty",
+      "experiencer"
+    ],
+    "legacy_aliases": "marcadores_origem_<marcador> preservado temporariamente como alias de presença/severidade"
+  },
+  "warning": "Parâmetros ilustrativos; calibrar antes do experimento definitivo."
+}

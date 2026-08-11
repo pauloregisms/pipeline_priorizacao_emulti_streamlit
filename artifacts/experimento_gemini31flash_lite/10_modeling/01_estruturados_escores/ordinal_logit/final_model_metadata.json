@@ -1,0 +1,10 @@
+{
+  "best_params": {
+    "model__alpha": 1.0
+  },
+  "best_inner_score": 0.4748175194889167,
+  "model_name": "ordinal_logit",
+  "converged": true,
+  "optimization_message": "CONVERGENCE: NORM OF PROJECTED GRADIENT <= PGTOL",
+  "interpretation": "Modelo ajustado apenas no desenvolvimento; explicações devem usar conjunto-teste final."
+}

@@ -1,0 +1,14 @@
+{
+  "timestamp_utc": "2026-08-11T15:29:27.267386+00:00",
+  "python": "3.12.13 (main, Mar  4 2026, 09:23:07) [GCC 11.4.0]",
+  "platform": "Linux-6.6.122+-x86_64-with-glibc2.35",
+  "libraries": {
+    "numpy": "2.0.2",
+    "pandas": "2.2.2",
+    "scipy": "1.16.3",
+    "sklearn": "1.6.1",
+    "xgboost": "3.3.0",
+    "shap": "0.52.0",
+    "yaml": "6.0.3"
+  }
+}
