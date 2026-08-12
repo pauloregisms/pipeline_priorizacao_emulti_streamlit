@@ -14,6 +14,7 @@ import streamlit as st
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 SRC_ROOT = PROJECT_ROOT / "src"
+PROJECT_REPOSITORY_URL = "https://github.com/pauloregisms/pipeline_priorizacao_emulti_streamlit"
 
 # Nomes dos arquivos consumidos ou oferecidos para download pela demonstração.
 # Alterações de nomenclatura devem ser feitas somente neste dicionário.
@@ -78,6 +79,12 @@ st.markdown(
       .block-container {padding-top: 1.5rem; padding-bottom: 3rem; max-width: 1380px;}
       .demo-banner {background:#fff7d6; border:1px solid #eab308; border-left:6px solid #ca8a04;
                     border-radius:.55rem; padding:.8rem 1rem; margin:.4rem 0 1.2rem 0; color:#422006;}
+      .home-intro {background:#f0fdfa; border:1px solid #99f6e4; border-left:6px solid #0f766e;
+                   border-radius:.55rem; padding:1rem 1.15rem; margin:.4rem 0 1.2rem 0;
+                   color:#134e4a; line-height:1.6;}
+      .academic-note {background:#f8fafc; border:1px solid #cbd5e1; border-radius:.55rem;
+                      padding:.9rem 1.05rem; margin:.7rem 0 1.2rem 0; color:#334155;
+                      line-height:1.55;}
       .narrative {background:#f8fafc; border:1px solid #cbd5e1; border-radius:.55rem;
                   padding:1rem 1.1rem; line-height:1.55; white-space:pre-wrap;}
       .small-note {color:#475569; font-size:.9rem;}
@@ -171,12 +178,74 @@ def render_navigation_menu() -> str:
 
 
 def render_overview(data: dict) -> None:
-    st.title("Pipeline sintético de priorização e-Multi")
-    st.write(
-        "Esta versão apresenta uma execução previamente produzida e congelada para inspeção pela banca. "
-        "A aplicação não recebe arquivos, não chama serviços externos e não reexecuta o pipeline."
+    st.title("Demonstração do pipeline sintético de priorização para e-Multi")
+    st.markdown(
+        """
+        <div class="home-intro">
+          <strong>Bem-vindo à versão de demonstração do projeto.</strong><br>
+          Esta aplicação foi preparada para apresentar à banca de avaliação os principais resultados e
+          artefatos computacionais da pesquisa. A interface permite explorar uma execução previamente
+          concluída com 500 perfis inteiramente sintéticos, sem necessidade de instalar programas ou
+          executar códigos.
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
+    st.subheader("Sobre o projeto")
+    st.write(
+        "O pipeline reproduz, em ambiente controlado, um possível fluxo de encaminhamento em saúde mental "
+        "para a e-Multi. A execução apresentada inclui a criação de perfis e medidas psicométricas "
+        "simuladas, a produção de narrativas clínicas sintéticas no formato SOAP, a identificação de "
+        "marcadores presentes nessas narrativas e a comparação de métodos para classificar uma prioridade "
+        "de referência simulada."
+    )
+    st.write(
+        "Nesta demonstração, o Gemini 3.1 Flash-Lite foi utilizado para produzir as narrativas e extrair "
+        "os marcadores clínicos. Os resultados já estão carregados no aplicativo e permanecem congelados "
+        "para que todas as pessoas consultem exatamente a mesma execução. A aplicação não recebe arquivos, "
+        "não chama serviços externos e não reexecuta o pipeline."
+    )
+
+    st.subheader("O que pode ser consultado")
+    st.markdown(
+        """
+        Use o menu lateral para percorrer os resultados da demonstração:
+
+        - **Perfis sintéticos:** dados simulados, narrativa clínica e comparação dos marcadores de cada perfil;
+        - **Qualidade e extração:** verificações da base e desempenho da identificação de informações nos textos;
+        - **Modelagem:** comparação dos métodos e resultados no conjunto final de teste;
+        - **Interpretabilidade:** variáveis que mais contribuíram para as classificações dos modelos;
+        - **Rastreabilidade:** configurações, relatórios e arquivos produzidos durante a execução.
+        """
+    )
+
+    st.subheader("Vinculação acadêmica")
+    st.markdown(
+        """
+        <div class="academic-note">
+          Este aplicativo apresenta os artefatos computacionais da pesquisa de mestrado de
+          <strong>Renata Alves dos Santos</strong>, desenvolvida no Mestrado Profissional em Saúde da
+          Família, vinculado ao Programa de Pós-Graduação em Saúde da Família da Universidade Estadual
+          Vale do Acaraú. A pesquisa é orientada pelo <strong>Professor Dr. Paulo Regis Menezes Sousa</strong>.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.link_button(
+        "Acessar o repositório do projeto no GitHub",
+        PROJECT_REPOSITORY_URL,
+    )
+
+    st.subheader("Como interpretar os resultados")
+    st.write(
+        "A finalidade desta aplicação é demonstrar o funcionamento e a rastreabilidade do método. Valores "
+        "elevados nas tabelas e nos gráficos indicam apenas que o pipeline conseguiu recuperar relações e "
+        "regras programadas no cenário sintético. Eles não demonstram validade clínica, segurança ou "
+        "efetividade para o atendimento de pessoas reais."
+    )
+
+    st.subheader("Resumo da execução apresentada")
     manifest = data["priority_view_manifest"]
     quality = data["quality"]
     cols = st.columns(4)
