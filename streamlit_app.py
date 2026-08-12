@@ -8,8 +8,10 @@ import sys
 from pathlib import Path
 from urllib.parse import quote
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
+from matplotlib.patches import Patch
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
@@ -28,6 +30,7 @@ DEMO_FILE_NAMES = {
         "metrics": "final_test_metrics.csv",
         "per_class": "final_test_per_class.csv",
         "calibration": "final_test_calibration_curves.csv",
+        "metadata": "final_model_metadata.json",
     },
     "explanations": {
         "ordinal_coefficients": "ordinal_coefficients.csv",
@@ -52,6 +55,7 @@ if str(SRC_ROOT) not in sys.path:
 from emulti_pipeline.demo import (  # noqa: E402
     DATASET_LABELS,
     DEMO_RUN_ID,
+    MARKER_LABELS,
     MODEL_LABELS,
     PRIORITY_LABELS,
     build_demo_archive,
@@ -130,6 +134,119 @@ def one_row(frame: pd.DataFrame, patient_id: str) -> pd.Series:
     if match.empty:
         raise KeyError(patient_id)
     return match.iloc[0]
+
+
+def coefficient_feature_label(feature: str) -> str:
+    """Traduz variáveis transformadas do modelo ordinal para rótulos legíveis."""
+
+    cleaned = feature
+    for prefix in ("numeric__", "categorical__"):
+        if cleaned.startswith(prefix):
+            cleaned = cleaned[len(prefix) :]
+
+    direct_labels = {
+        "phq9_total": "PHQ-9 — escore total",
+        "gad7_total": "GAD-7 — escore total",
+        "idate_estado_total": "IDATE-Estado — escore total",
+        "age_years": "Idade",
+        "income_brl": "Renda",
+        "income_normalized": "Renda normalizada",
+        "food_insecurity": "Insegurança alimentar",
+        "poor_housing": "Moradia inadequada",
+        "social_vulnerability": "Vulnerabilidade social",
+        "mental_health_history": "Histórico de saúde mental",
+        "chronic_condition": "Condição crônica",
+        "recent_service_contact": "Contato recente com o serviço",
+        "education_fundamental_ou_menos": "Escolaridade — fundamental ou menos",
+        "education_medio": "Escolaridade — ensino médio",
+        "education_superior": "Escolaridade — ensino superior",
+        "gender_category_feminino": "Gênero — feminino",
+        "gender_category_masculino": "Gênero — masculino",
+        "gender_category_outro_ou_nao_informado": "Gênero — outro ou não informado",
+    }
+    if cleaned in direct_labels:
+        return direct_labels[cleaned]
+
+    qualifier_labels = {
+        "present": "presença",
+        "negated": "negação",
+        "remote_present": "antecedente remoto",
+        "severity_code": "código de gravidade",
+        "severity_ausente": "gravidade ausente",
+        "severity_leve": "gravidade leve",
+        "severity_moderado": "gravidade moderada",
+        "severity_importante": "gravidade importante",
+        "severity_alto": "gravidade alta",
+        "severity_nao_especificado": "gravidade não especificada",
+        "temporality_atual": "temporalidade atual",
+        "temporality_remoto": "temporalidade remota",
+        "temporality_nao_especificado": "temporalidade não especificada",
+        "certainty_afirmado": "achado afirmado",
+        "certainty_incerto": "achado incerto",
+        "experiencer_paciente": "referente ao paciente",
+        "experiencer_terceiro": "referente a terceiro",
+    }
+    for marker, marker_label in MARKER_LABELS.items():
+        marker_prefix = f"marker_{marker}_"
+        if cleaned.startswith(marker_prefix):
+            qualifier = cleaned[len(marker_prefix) :]
+            qualifier_label = qualifier_labels.get(qualifier, qualifier.replace("_", " "))
+            return f"{marker_label} — {qualifier_label}"
+
+    return clean_feature_name(feature)
+
+
+def ordinal_coefficient_chart(frame: pd.DataFrame):
+    """Apresenta coeficientes com sinal, sem tratá-los como importância causal."""
+
+    chart_data = frame.sort_values("Magnitude absoluta", ascending=True).copy()
+    chart_data["Direção"] = chart_data["Coeficiente estimado"].map(
+        lambda value: "Maior prioridade" if value >= 0 else "Menor prioridade"
+    )
+    colors = chart_data["Direção"].map(
+        {"Maior prioridade": "#8ecfc9", "Menor prioridade": "#efb2bd"}
+    )
+
+    figure_height = max(6.0, 0.36 * len(chart_data))
+    figure, axis = plt.subplots(figsize=(10.5, figure_height))
+    bars = axis.barh(
+        chart_data["Variável"],
+        chart_data["Coeficiente estimado"],
+        color=colors,
+        edgecolor="white",
+    )
+    axis.axvline(0, color="#475569", linewidth=1)
+    axis.set_xlabel("Coeficiente estimado")
+    axis.set_ylabel("")
+    axis.grid(axis="x", color="#e2e8f0", linewidth=0.8)
+    axis.set_axisbelow(True)
+    axis.spines[["top", "right", "left"]].set_visible(False)
+    axis.legend(
+        handles=[
+            Patch(color="#8ecfc9", label="Maior prioridade"),
+            Patch(color="#efb2bd", label="Menor prioridade"),
+        ],
+        title="Direção no modelo",
+        frameon=False,
+        loc="lower right",
+    )
+
+    largest = max(chart_data["Magnitude absoluta"].max(), 0.1)
+    for bar, value in zip(bars, chart_data["Coeficiente estimado"]):
+        offset = largest * 0.025
+        axis.text(
+            value + (offset if value >= 0 else -offset),
+            bar.get_y() + bar.get_height() / 2,
+            f"{value:.2f}".replace(".", ","),
+            va="center",
+            ha="left" if value >= 0 else "right",
+            fontsize=9,
+            color="#334155",
+        )
+
+    axis.margins(x=0.14)
+    figure.tight_layout()
+    return figure
 
 
 def demo_banner() -> None:
@@ -541,11 +658,61 @@ def render_explanations(data: dict) -> None:
         frame = pd.read_csv(
             explanation_root / DEMO_FILE_NAMES["explanations"]["ordinal_coefficients"]
         )
-        frame["Variável"] = frame["feature"].map(clean_feature_name)
-        frame["Importância"] = frame["abs_coefficient"]
-        frame["Coeficiente"] = frame["coefficient"]
-        method = "magnitude dos coeficientes do modelo ordinal"
-        table_columns = ["Variável", "Importância", "Coeficiente"]
+        frame["Variável"] = frame["feature"].map(coefficient_feature_label)
+        frame["Coeficiente estimado"] = frame["coefficient"]
+        frame["Magnitude absoluta"] = frame["abs_coefficient"]
+        frame["Direção"] = frame["Coeficiente estimado"].map(
+            lambda value: "Maior prioridade" if value >= 0 else "Menor prioridade"
+        )
+
+        top = frame.sort_values("Magnitude absoluta", ascending=False).head(20).copy()
+        st.subheader("Coeficientes estimados do modelo ordinal")
+        st.write(
+            "O gráfico preserva o sinal dos coeficientes. Valores positivos acompanham o deslocamento "
+            "para prioridades mais elevadas, enquanto valores negativos acompanham o deslocamento para "
+            "prioridades mais baixas, mantidas as demais informações do modelo."
+        )
+        coefficient_figure = ordinal_coefficient_chart(top)
+        st.pyplot(coefficient_figure, use_container_width=True)
+        plt.close(coefficient_figure)
+
+        coefficient_table = top[
+            ["Variável", "Coeficiente estimado", "Magnitude absoluta", "Direção"]
+        ].copy()
+        coefficient_table["Coeficiente estimado"] = coefficient_table[
+            "Coeficiente estimado"
+        ].round(4)
+        coefficient_table["Magnitude absoluta"] = coefficient_table[
+            "Magnitude absoluta"
+        ].round(4)
+        st.dataframe(coefficient_table, hide_index=True, width="stretch")
+
+        st.info(
+            "A magnitude absoluta é usada somente para ordenar a apresentação. Ela não mede diretamente "
+            "quanto o desempenho diminuiria com a retirada da variável."
+        )
+
+        metadata_path = (
+            RUN_ROOT
+            / "10_modeling"
+            / dataset
+            / model
+            / DEMO_FILE_NAMES["modeling"]["metadata"]
+        )
+        if metadata_path.exists():
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            if metadata.get("converged") is False:
+                st.warning(
+                    "O ajuste final deste modelo não alcançou convergência dentro do limite configurado. "
+                    "Os coeficientes devem ser considerados provisórios até que o ajuste seja repetido e "
+                    "sua estabilidade seja confirmada."
+                )
+
+        st.warning(
+            "Os coeficientes descrevem relações internas do modelo no cenário sintético. Eles não "
+            "representam causalidade, relevância clínica isolada nem adequação para decisões assistenciais."
+        )
+        return
     else:
         frame = pd.read_csv(
             explanation_root / DEMO_FILE_NAMES["explanations"]["shap_importance"]
