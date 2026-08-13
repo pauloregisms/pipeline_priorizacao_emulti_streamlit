@@ -740,11 +740,23 @@ def render_final_queue(data: dict) -> None:
         displayed_queue = queue
         st.caption("A tabela apresenta todos os perfis do conjunto final de teste.")
 
-    st.dataframe(
+    st.caption(
+        "Selecione uma linha da tabela para visualizar a narrativa clínica sintética completa "
+        "do perfil correspondente."
+    )
+    table_key = (
+        "final_classification_queue_sample"
+        if display_mode == "Amostra uniforme de 30 perfis"
+        else "final_classification_queue_full"
+    )
+    selection_event = st.dataframe(
         displayed_queue,
         hide_index=True,
         width="stretch",
         height=650,
+        key=table_key,
+        on_select="rerun",
+        selection_mode="single-row",
     )
 
     first_position = int(displayed_queue["Posição"].iloc[0])
@@ -752,6 +764,41 @@ def render_final_queue(data: dict) -> None:
     st.caption(
         f"Perfis exibidos: {len(displayed_queue)}. Intervalo coberto: posições "
         f"{first_position} a {last_position}."
+    )
+
+    selected_rows = selection_event.selection.rows
+    if not selected_rows:
+        st.info("Selecione um perfil na tabela para consultar sua narrativa.")
+        return
+
+    selected_profile = displayed_queue.iloc[selected_rows[0]]
+    patient_id = str(selected_profile["ID do perfil sintético"])
+    try:
+        narrative = one_row(data["narratives"], patient_id)
+    except KeyError:
+        st.warning(
+            f"A narrativa do perfil {patient_id} não foi localizada nos artefatos desta execução."
+        )
+        return
+
+    narrative_text = narrative.get("narrativa_clinica")
+    if pd.isna(narrative_text) or not str(narrative_text).strip():
+        st.warning(f"O perfil {patient_id} não possui uma narrativa disponível para apresentação.")
+        return
+
+    st.divider()
+    st.subheader("Narrativa clínica sintética do perfil selecionado")
+    details = st.columns(3)
+    details[0].metric("Perfil", patient_id)
+    details[1].metric("Posição na fila", int(selected_profile["Posição"]))
+    details[2].metric("Prioridade prevista", selected_profile["Prioridade prevista"])
+    st.markdown(
+        f'<div class="narrative">{html.escape(str(narrative_text))}</div>',
+        unsafe_allow_html=True,
+    )
+    st.caption(
+        "A narrativa foi gerada com dados exclusivamente sintéticos e é apresentada somente para "
+        "inspeção da demonstração acadêmica."
     )
 
 
