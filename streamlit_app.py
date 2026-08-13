@@ -715,6 +715,14 @@ def render_final_queue(data: dict) -> None:
         ),
     )
 
+    st.info(
+        "**O que os instrumentos avaliam:** o PHQ-9 avalia a intensidade de sintomas depressivos "
+        "nas duas últimas semanas e varia de 0 a 27 pontos; o GAD-7 avalia sintomas de ansiedade "
+        "nas duas últimas semanas e varia de 0 a 21 pontos; o IDATE-Estado avalia o nível de "
+        "ansiedade percebido no momento da resposta e varia de 20 a 80 pontos. Em todos eles, "
+        "pontuações maiores indicam maior intensidade dos sintomas ou da ansiedade avaliada."
+    )
+
     st.caption(
         "Os valores numéricos do PHQ-9, do GAD-7 e do IDATE-Estado foram substituídos por faixas "
         "interpretativas. As faixas do PHQ-9 e do GAD-7 vêm dos artefatos da simulação. Para o "
