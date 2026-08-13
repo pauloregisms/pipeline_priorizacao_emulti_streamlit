@@ -34,6 +34,30 @@ DEMO_FILE_NAMES = {
     },
 }
 
+# Rótulos legíveis para as faixas psicométricas registradas pela etapa 2.
+PSYCHOMETRIC_BAND_LABELS = {
+    "phq9_band": {
+        "minimo": "Mínimo",
+        "leve": "Leve",
+        "moderado": "Moderado",
+        "moderadamente_grave": "Moderadamente grave",
+        "grave": "Grave",
+    },
+    "gad7_band": {
+        "minimo": "Mínimo",
+        "leve": "Leve",
+        "moderado": "Moderado",
+        "grave": "Grave",
+    },
+}
+
+# Faixas interpretativas adotadas para a apresentação do IDATE-Estado.
+IDATE_ESTADO_BAND_LABELS = [
+    "Baixo nível de ansiedade",
+    "Nível médio ou moderado de ansiedade",
+    "Alto nível de ansiedade",
+]
+
 # O identificador é usado na URL e o texto é apresentado no menu lateral.
 NAVIGATION_ITEMS = {
     "visao-geral": "Visão geral",
@@ -145,6 +169,73 @@ def uniform_ordered_sample(frame: pd.DataFrame, sample_size: int = 30) -> pd.Dat
     last_index = len(frame) - 1
     indices = [round(step * last_index / (sample_size - 1)) for step in range(sample_size)]
     return frame.iloc[indices].reset_index(drop=True)
+
+
+def classification_queue_with_bands(
+    queue: pd.DataFrame,
+    psychometrics: pd.DataFrame,
+) -> pd.DataFrame:
+    """Substitui escores da fila pelas faixas interpretativas adotadas."""
+
+    required_psychometric_columns = {"patient_id", "phq9_band", "gad7_band"}
+    missing_columns = sorted(required_psychometric_columns.difference(psychometrics.columns))
+    if missing_columns:
+        raise KeyError(
+            "Colunas psicométricas ausentes: " + ", ".join(missing_columns)
+        )
+
+    bands = psychometrics[["patient_id", "phq9_band", "gad7_band"]].copy()
+    bands["patient_id"] = bands["patient_id"].astype(str)
+    bands = bands.drop_duplicates(subset="patient_id", keep="first")
+    bands["Faixa do PHQ-9"] = (
+        bands["phq9_band"]
+        .map(PSYCHOMETRIC_BAND_LABELS["phq9_band"])
+        .fillna("Não informada")
+    )
+    bands["Faixa do GAD-7"] = (
+        bands["gad7_band"]
+        .map(PSYCHOMETRIC_BAND_LABELS["gad7_band"])
+        .fillna("Não informada")
+    )
+
+    result = queue.copy()
+    result["ID do perfil sintético"] = result["ID do perfil sintético"].astype(str)
+    idate_estado_scores = pd.to_numeric(result["IDATE-Estado"], errors="coerce")
+    result["Faixa do IDATE-Estado"] = pd.cut(
+        idate_estado_scores,
+        bins=[19, 40, 60, 80],
+        labels=IDATE_ESTADO_BAND_LABELS,
+        include_lowest=True,
+    ).astype("object")
+    result["Faixa do IDATE-Estado"] = result["Faixa do IDATE-Estado"].fillna(
+        "Não informada"
+    )
+    result = result.merge(
+        bands[["patient_id", "Faixa do PHQ-9", "Faixa do GAD-7"]],
+        how="left",
+        left_on="ID do perfil sintético",
+        right_on="patient_id",
+        validate="many_to_one",
+    ).drop(columns="patient_id")
+    result[["Faixa do PHQ-9", "Faixa do GAD-7"]] = result[
+        ["Faixa do PHQ-9", "Faixa do GAD-7"]
+    ].fillna("Não informada")
+
+    original_columns = [
+        column for column in queue.columns if column not in {"PHQ-9", "GAD-7", "IDATE-Estado"}
+    ]
+    insertion_index = (
+        original_columns.index("Vulnerabilidade social") + 1
+        if "Vulnerabilidade social" in original_columns
+        else len(original_columns)
+    )
+    display_columns = original_columns.copy()
+    display_columns[insertion_index:insertion_index] = [
+        "Faixa do PHQ-9",
+        "Faixa do GAD-7",
+        "Faixa do IDATE-Estado",
+    ]
+    return result[display_columns]
 
 
 def demo_banner() -> None:
@@ -603,6 +694,11 @@ def render_final_queue(data: dict) -> None:
         return
 
     queue = queue.sort_values("Posição", kind="stable").reset_index(drop=True)
+    try:
+        queue = classification_queue_with_bands(queue, data["psychometrics"])
+    except (KeyError, pd.errors.MergeError) as exc:
+        st.error(f"Não foi possível associar as faixas dos instrumentos à fila: {exc}")
+        return
 
     counts = queue["Prioridade prevista"].value_counts()
     summary_columns = st.columns(5)
@@ -617,6 +713,13 @@ def render_final_queue(data: dict) -> None:
             "A amostra seleciona posições aproximadamente equidistantes ao longo da fila e mantém "
             "a mesma ordenação do resultado completo."
         ),
+    )
+
+    st.caption(
+        "Os valores numéricos do PHQ-9, do GAD-7 e do IDATE-Estado foram substituídos por faixas "
+        "interpretativas. As faixas do PHQ-9 e do GAD-7 vêm dos artefatos da simulação. Para o "
+        "IDATE-Estado, foram adotados os intervalos de 20 a 40 pontos para baixo nível de ansiedade, "
+        "41 a 60 pontos para nível médio ou moderado e 61 a 80 pontos para alto nível."
     )
 
     if display_mode == "Amostra uniforme de 30 perfis":
